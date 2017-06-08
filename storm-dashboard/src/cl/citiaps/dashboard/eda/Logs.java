@@ -7,7 +7,7 @@ import org.apache.storm.tuple.Values;
 
 public class Logs {
 	private Date timestamp;
-	private String texto;
+	private String idUser;
 	private String sentimiento;
 
 	public Logs() {
