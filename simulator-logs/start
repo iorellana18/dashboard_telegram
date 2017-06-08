@@ -1,0 +1,1 @@
+./tail2kafka -l ayni.log -t ayni -s localhost -p 9092 -d 1
