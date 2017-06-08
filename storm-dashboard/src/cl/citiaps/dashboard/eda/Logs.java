@@ -1,26 +1,50 @@
 package cl.citiaps.dashboard.eda;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.storm.tuple.Values;
 
 public class Logs {
+	private String texto;
 	private Date timestamp;
 	private String idUser;
-	private String sentimiento;
+	private String telefono;
+	private String tipo;
+	private String mision;
+	private String latitud;
+	private String longitud;
+	private String tipoEmergencia;
 
 	public Logs() {
 		this.setTimestamp(null);
 		this.setTexto(null);
-		this.setSentimiento(null);
 	}
 
 	public Logs(Date timestamp, String texto, String sentimiento) {
 		super();
 		this.setTimestamp(timestamp);
 		this.setTexto(texto);
-		this.setSentimiento(sentimiento);
+	}
+	
+	public Logs(String text){
+		String[] parser = text.split(" ");
+		if(parser.length==11){ //Hay sólo una línea con 10 datos
+			Date timeStamp = new Date(Long.valueOf(parser[0]));
+			setTimestamp(timeStamp);
+			setIdUser(parser[1]);
+			setTelefono(parser[2]);
+			setTipo(parser[3]);
+			setMision(parser[4]);
+			setLatitud(parser[6]);
+			setLongitud(parser[8]);
+			setTipoEmergencia(parser[10]);
+		}
+	}
+	
+	public void printLog(){
+		System.out.println(timestamp+":"+idUser+":"+telefono+":"+tipo+":"+mision+":"+latitud+":"+longitud+":"+tipoEmergencia);
 	}
 
 	public List<Object> factoryTexto() {
@@ -43,17 +67,67 @@ public class Logs {
 		this.texto = texto;
 	}
 
-	public String getSentimiento() {
-		return sentimiento;
-	}
 
-	public void setSentimiento(String sentimiento) {
-		this.sentimiento = sentimiento;
-	}
 
 	@Override
 	public String toString() {
 		return "{Texto=" + getTexto() + "},{Timestamp=" + getTimestamp().toString() + "}";
+	}
+
+	public String getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(String idUser) {
+		this.idUser = idUser;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getMision() {
+		return mision;
+	}
+
+	public void setMision(String mision) {
+		this.mision = mision;
+	}
+
+	public String getLatitud() {
+		return latitud;
+	}
+
+	public void setLatitud(String latitud) {
+		this.latitud = latitud;
+	}
+
+	public String getLongitud() {
+		return longitud;
+	}
+
+	public void setLongitud(String longitud) {
+		this.longitud = longitud;
+	}
+
+	public String getTipoEmergencia() {
+		return tipoEmergencia;
+	}
+
+	public void setTipoEmergencia(String tipoEmergencia) {
+		this.tipoEmergencia = tipoEmergencia;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
 	}
 
 }

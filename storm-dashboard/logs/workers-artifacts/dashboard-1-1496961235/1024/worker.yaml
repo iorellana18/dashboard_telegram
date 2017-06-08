@@ -1,0 +1,4 @@
+worker-id: 64e11e04-897d-45ef-996c-412a6f31c9c1
+logs.users: []
+logs.groups: []
+topology.submitter.user: ian
