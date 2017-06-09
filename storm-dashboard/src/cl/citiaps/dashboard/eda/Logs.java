@@ -12,14 +12,12 @@ public class Logs {
 
 	public Logs() {
 		this.setTimestamp(null);
-		this.setTexto(null);
 		this.setSentimiento(null);
 	}
 
-	public Logs(Date timestamp, String texto, String sentimiento) {
+	public Logs(Date timestamp, String sentimiento) {
 		super();
 		this.setTimestamp(timestamp);
-		this.setTexto(texto);
 		this.setSentimiento(sentimiento);
 	}
 
@@ -35,14 +33,6 @@ public class Logs {
 		this.timestamp = timestamp;
 	}
 
-	public String getTexto() {
-		return texto;
-	}
-
-	public void setTexto(String texto) {
-		this.texto = texto;
-	}
-
 	public String getSentimiento() {
 		return sentimiento;
 	}
@@ -51,9 +41,10 @@ public class Logs {
 		this.sentimiento = sentimiento;
 	}
 
-	@Override
-	public String toString() {
-		return "{Texto=" + getTexto() + "},{Timestamp=" + getTimestamp().toString() + "}";
-	}
+	// @Override
+	// public String toString() {
+	// return "{Texto=" + getTexto() + "},{Timestamp=" +
+	// getTimestamp().toString() + "}";
+	// }
 
 }
