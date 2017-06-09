@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Palabras {
 	public boolean contiene(List<String> palabras, String texto) {
@@ -48,8 +49,8 @@ public class Palabras {
 		return cont;
 	}
 
-	public List<String> leerDiccionario(String ruta) {
-		List<String> palabras = new ArrayList<String>();
+	public Stack<String> leerDiccionario(String ruta) {
+		Stack<String> palabras = new Stack<String>();
 
 		String linea = null;
 		try {

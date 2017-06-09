@@ -10,6 +10,8 @@ import org.apache.storm.tuple.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cl.citiaps.dashboard.eda.Logs;
+
 public class ParseLog implements IRichBolt {
 
 	private static final long serialVersionUID = 6101916216609388178L;
@@ -30,7 +32,11 @@ public class ParseLog implements IRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 		String text = (String) tuple.getValueByField("str");
-		System.out.println(text);
+		//System.out.println(text);
+		Logs log = new Logs(text);
+		
+		log.printLog();
+		
 	}
 
 	@Override
