@@ -14,6 +14,7 @@ import org.apache.storm.spout.SchemeAsMultiScheme;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.utils.Utils;
 
+import cl.citiaps.dashboard.bolt.ElasticSearch;
 import cl.citiaps.dashboard.bolt.ParseLog;
 
 public class Topology {
@@ -35,6 +36,7 @@ public class Topology {
 
 		builder.setSpout("LogsSpout", kafkaSpout, 1);
 		builder.setBolt("ParseLog", new ParseLog(), 1).shuffleGrouping("LogsSpout");
+		builder.setBolt("ElasticSearch", new ElasticSearch("localhost", 9200, "cluster")).shuffleGrouping("ParseLog");
 
 		if (args != null && args.length > 0) {
 			try {

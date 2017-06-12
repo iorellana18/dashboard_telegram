@@ -19,7 +19,7 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cl.citiaps.dashboard.eda.Logs;
+import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.Palabras;
 
 public class ElasticSearch implements IRichBolt {
@@ -58,6 +58,9 @@ public class ElasticSearch implements IRichBolt {
 
 	@Override
 	public void execute(Tuple tuple) {
+		Log log = (Log) tuple.getValueByField("log");
+		log.printLog();
+
 		// Data data = new Data("hola", "chasso");
 		// Map map = oMapper.convertValue(data, Map.class);
 
@@ -85,7 +88,7 @@ public class ElasticSearch implements IRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		outputFieldsDeclarer.declare(new Fields("texto"));
+		// outputFieldsDeclarer.declare(new Fields("texto"));
 	}
 
 	@Override

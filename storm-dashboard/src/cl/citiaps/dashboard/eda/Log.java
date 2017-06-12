@@ -1,12 +1,11 @@
 package cl.citiaps.dashboard.eda;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.storm.tuple.Values;
 
-public class Logs {
+public class Log {
 	private String texto;
 	private Date timestamp;
 	private String idUser;
@@ -16,26 +15,8 @@ public class Logs {
 	private String latitud;
 	private String longitud;
 	private String tipoEmergencia;
-
-	public Logs() {
-		this.setTimestamp(null);
-<<<<<<< HEAD
-		this.setSentimiento(null);
-=======
-		this.setTexto(null);
->>>>>>> 25aa390d37dfd2968e234dc751b691abce1a2fc2
-	}
-
-	public Logs(Date timestamp, String sentimiento) {
-		super();
-		this.setTimestamp(timestamp);
-<<<<<<< HEAD
-		this.setSentimiento(sentimiento);
-=======
-		this.setTexto(texto);
-	}
 	
-	public Logs(String text){
+	public Log(String text){
 		String[] parser = text.split(" ");
 		if(parser.length==11){ //Hay sólo una línea con 10 datos
 			Date timeStamp = new Date(Long.valueOf(parser[0]));
@@ -52,7 +33,6 @@ public class Logs {
 	
 	public void printLog(){
 		System.out.println(timestamp+":"+idUser+":"+telefono+":"+tipo+":"+mision+":"+latitud+":"+longitud+":"+tipoEmergencia);
->>>>>>> 25aa390d37dfd2968e234dc751b691abce1a2fc2
 	}
 
 	public List<Object> factoryTexto() {
@@ -67,11 +47,6 @@ public class Logs {
 		this.timestamp = timestamp;
 	}
 
-<<<<<<< HEAD
-	public String getSentimiento() {
-		return sentimiento;
-	}
-=======
 	public String getTexto() {
 		return texto;
 	}
@@ -79,15 +54,6 @@ public class Logs {
 	public void setTexto(String texto) {
 		this.texto = texto;
 	}
-
->>>>>>> 25aa390d37dfd2968e234dc751b691abce1a2fc2
-
-
-	// @Override
-	// public String toString() {
-	// return "{Texto=" + getTexto() + "},{Timestamp=" +
-	// getTimestamp().toString() + "}";
-	// }
 
 	public String getIdUser() {
 		return idUser;

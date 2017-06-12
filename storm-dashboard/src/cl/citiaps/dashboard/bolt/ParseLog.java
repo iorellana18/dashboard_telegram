@@ -1,16 +1,21 @@
 package cl.citiaps.dashboard.bolt;
 
+import java.util.List;
 import java.util.Map;
 
+import org.apache.storm.generated.GlobalStreamId;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.MessageId;
 import org.apache.storm.tuple.Tuple;
+import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cl.citiaps.dashboard.eda.Logs;
+import cl.citiaps.dashboard.eda.Log;
 
 public class ParseLog implements IRichBolt {
 
@@ -32,21 +37,24 @@ public class ParseLog implements IRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 		String text = (String) tuple.getValueByField("str");
-		//System.out.println(text);
-		Logs log = new Logs(text);
-		
-		log.printLog();
-		
+		Log log = new Log(text);
+		// log.printLog();
+		Values values = new Values(log);
+		this.outputCollector.emit(values);
+
 	}
 
 	@Override
 	public void prepare(Map mapConf, TopologyContext topologyContext, OutputCollector outputCollector) {
 		logger.info("Prepare ParseLog");
+
+		this.mapConf = mapConf;
+		this.outputCollector = outputCollector;
 	}
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		// outputFieldsDeclarer.declare(new Fields("texto"));
+		outputFieldsDeclarer.declare(new Fields("log"));
 	}
 
 	@Override
