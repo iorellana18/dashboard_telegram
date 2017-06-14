@@ -12,16 +12,13 @@ import com.google.gson.Gson;
 
 public class Log {
 	private long timestamp;
-	private String texto;
 	private String date;
-	private String idUser;
-	private String telefono;
-	private String tipo;
+	private String tipoUsuario;
+	private String idUsuario;
+	private String accion;
 	private String mision;
-	private String latitud;
-	private String longitud;
 	private String location;
-	private String tipoEmergencia;
+	private String emergencia;
 
 	public Log(String text) {
 		String[] parser = text.split(" ");
@@ -33,15 +30,13 @@ public class Log {
 			dateFormat.setTimeZone(timeZone);
 			setDate(dateFormat.format(timeStamp));
 			// setTimestamp(parser[0]);
-			setIdUser(parser[1]);
-			setTelefono(parser[2]);
-			setTipo(parser[3]);
+			setTipoUsuario(parser[1]);
+			setIdUsuario(parser[2]);
+			setAccion(parser[3]);
 			setMision(parser[4]);
-			setLatitud(parser[6]);
-			setLongitud(parser[8]);
-			setLocation(getLatitud() + "," + getLongitud());
+			setLocation(parser[6] + "," + parser[8]);
 			String[] parseEmergencia = parser[10].split("\\(");
-			setTipoEmergencia(parseEmergencia[0]);
+			setEmergencia(parseEmergencia[0]);
 		}
 	}
 
@@ -57,14 +52,6 @@ public class Log {
 		this.timestamp = timestamp;
 	}
 
-	public String getTexto() {
-		return texto;
-	}
-
-	public void setTexto(String texto) {
-		this.texto = texto;
-	}
-
 	public String getDate() {
 		return date;
 	}
@@ -73,20 +60,28 @@ public class Log {
 		this.date = date;
 	}
 
-	public String getIdUser() {
-		return idUser;
+	public String getTipoUsuario() {
+		return tipoUsuario;
 	}
 
-	public void setIdUser(String idUser) {
-		this.idUser = idUser;
+	public void setTipoUsuario(String tipoUsuario) {
+		this.tipoUsuario = tipoUsuario;
 	}
 
-	public String getTipo() {
-		return tipo;
+	public String getIdUsuario() {
+		return idUsuario;
 	}
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setIdUsuario(String idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
+	public String getAccion() {
+		return accion;
+	}
+
+	public void setAccion(String accion) {
+		this.accion = accion;
 	}
 
 	public String getMision() {
@@ -97,22 +92,6 @@ public class Log {
 		this.mision = mision;
 	}
 
-	public String getLatitud() {
-		return latitud;
-	}
-
-	public void setLatitud(String latitud) {
-		this.latitud = latitud;
-	}
-
-	public String getLongitud() {
-		return longitud;
-	}
-
-	public void setLongitud(String longitud) {
-		this.longitud = longitud;
-	}
-
 	public String getLocation() {
 		return location;
 	}
@@ -121,20 +100,12 @@ public class Log {
 		this.location = location;
 	}
 
-	public String getTipoEmergencia() {
-		return tipoEmergencia;
+	public String getEmergencia() {
+		return emergencia;
 	}
 
-	public void setTipoEmergencia(String tipoEmergencia) {
-		this.tipoEmergencia = tipoEmergencia;
-	}
-
-	public String getTelefono() {
-		return telefono;
-	}
-
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
+	public void setEmergencia(String emergencia) {
+		this.emergencia = emergencia;
 	}
 
 	@Override

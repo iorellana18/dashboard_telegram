@@ -1,6 +1,8 @@
 package cl.citiaps.dashboard.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +56,8 @@ public class Palabras {
 
 		String linea = null;
 		try {
-			InputStream input = getClass().getResourceAsStream(ruta);
+			File file = new File(ruta);
+			InputStream input = new FileInputStream(file);
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(input));
 
 			while ((linea = bufferedReader.readLine()) != null) {

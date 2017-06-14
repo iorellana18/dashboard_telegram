@@ -9,7 +9,6 @@ import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Tuple;
-
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
@@ -21,9 +20,9 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import cl.citiaps.dashboard.eda.Cant;
 import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
+import cl.citiaps.dashboard.eda.Mision;
 
 public class ElasticSearch implements IRichBolt {
 
@@ -66,25 +65,25 @@ public class ElasticSearch implements IRichBolt {
 			});
 
 			IndexResponse response = transportClient.prepareIndex("onemi", "mission").setSource(map).get();
-			// System.out.println(response);
+
 		} else if (tuple.contains("count")) {
 			Count count = (Count) tuple.getValueByField("count");
-			// System.out.println(count.toString());
 
 			Map<String, Object> map = oMapper.convertValue(count, new TypeReference<Map<String, Object>>() {
 			});
+			logger.info("{}", map);
 
 			IndexResponse response = transportClient.prepareIndex("onemi", "count").setSource(map).get();
-			// System.out.println(response);
-		} else if (tuple.contains("cant")) {
-			Cant cant = (Cant) tuple.getValueByField("cant");
-			// System.out.println(count.toString());
+			logger.info("{}", response);
+		} else if (tuple.contains("mision")) {
+			Mision mision = (Mision) tuple.getValueByField("mision");
 
-			Map<String, Object> map = oMapper.convertValue(cant, new TypeReference<Map<String, Object>>() {
+			Map<String, Object> map = oMapper.convertValue(mision, new TypeReference<Map<String, Object>>() {
 			});
+			logger.info("{}", map);
 
-			IndexResponse response = transportClient.prepareIndex("onemi", "cant").setSource(map).get();
-			 System.out.println(response);
+			IndexResponse response = transportClient.prepareIndex("onemi", "mision").setSource(map).get();
+			logger.info("{}", response);
 		}
 	}
 

@@ -38,8 +38,7 @@ public class ParseLog implements IRichBolt {
 	public void execute(Tuple tuple) {
 		String text = (String) tuple.getValueByField("str");
 		Log log = new Log(text);
-		Values values = new Values(log);
-		this.outputCollector.emit(values);
+		this.outputCollector.emit(log.factoryLog());
 	}
 
 	@Override

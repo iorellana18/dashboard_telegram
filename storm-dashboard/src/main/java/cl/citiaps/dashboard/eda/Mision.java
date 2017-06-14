@@ -6,22 +6,31 @@ import org.apache.storm.tuple.Values;
 
 import com.google.gson.Gson;
 
-public class Count {
+public class Mision {
 	private String tipo;
 	private String date;
 	private Long count;
+	private String mision;
+	private String location;
+	private String emergencia;
 
-	public Count() {
+	public Mision() {
 		this.tipo = null;
 		this.date = null;
 		this.setCount(Long.valueOf(0));
-
+		this.mision = null;
+		this.location = null;
+		this.emergencia = null;
 	}
 
-	public Count(String tipo, String date, Long count) {
+	public Mision(String tipo, String date, Long count, String mision, String location, String emergencia) {
 		this.setTipo(tipo);
 		this.date = date;
 		this.setCount(count);
+		this.mision = mision;
+		this.location = location;
+		this.emergencia = emergencia;
+
 	}
 
 	public List<Object> factoryCount() {
@@ -50,6 +59,30 @@ public class Count {
 
 	public void setCount(Long count) {
 		this.count = count;
+	}
+
+	public String getMision() {
+		return mision;
+	}
+
+	public void setMision(String mision) {
+		this.mision = mision;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getEmergencia() {
+		return emergencia;
+	}
+
+	public void setEmergencia(String emergencia) {
+		this.emergencia = emergencia;
 	}
 
 	@Override

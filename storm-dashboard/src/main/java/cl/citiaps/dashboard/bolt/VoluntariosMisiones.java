@@ -1,16 +1,10 @@
 package cl.citiaps.dashboard.bolt;
 
-import java.lang.reflect.Executable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -24,12 +18,13 @@ import org.slf4j.LoggerFactory;
 
 import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
+import cl.citiaps.dashboard.eda.Mision;
 
-public class Delay implements IRichBolt {
+public class VoluntariosMisiones implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
 
-	private static Logger logger = LoggerFactory.getLogger(Delay.class);
+	private static Logger logger = LoggerFactory.getLogger(VoluntariosMisiones.class);
 
 	private OutputCollector outputCollector;
 	private Map mapConf;
@@ -38,11 +33,10 @@ public class Delay implements IRichBolt {
 	private long timeDelay;
 	private long emitTimeframe;
 
-	private Long init = new Long("1397328001");
+	private Map<String, Long> countVoluntario;
+	private Map<String, Mision> classVoluntario;
 
-	private Map<Long, List<Log>> timestamp;
-
-	public Delay(long timeDelay, long emitTimeframe) {
+	public VoluntariosMisiones(long timeDelay, long emitTimeframe) {
 		this.timeDelay = timeDelay;
 		this.emitTimeframe = emitTimeframe;
 	}
@@ -52,23 +46,31 @@ public class Delay implements IRichBolt {
 		this.mapConf = mapConf;
 		this.outputCollector = outputCollector;
 
-		this.timestamp = new HashMap<Long, List<Log>>();
+		this.countVoluntario = Collections.synchronizedMap(new HashMap<String, Long>());
+		this.classVoluntario = new HashMap<String, Mision>();
 
 		this.emitTask = new Timer();
-		this.emitTask.scheduleAtFixedRate(new EmitTask(this.timestamp, this.outputCollector), timeDelay, emitTimeframe);
+		this.emitTask.scheduleAtFixedRate(
+				new EmitTask(this.countVoluntario, this.classVoluntario, this.outputCollector), timeDelay * 1000,
+				emitTimeframe * 1000);
 	}
 
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-
-		if (this.timestamp.containsKey(log.getTimestamp())) {
-			this.timestamp.get(log.getTimestamp()).add(log);
-		} else {
-			List<Log> logs = new ArrayList<Log>();
-			logs.add(log);
-			this.timestamp.put(log.getTimestamp(), logs);
+		if (log.getAccion().equals("ACCEPT_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
+			if (this.countVoluntario.containsKey(log.getMision())) {
+				this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) + 1));
+			} else {
+				this.countVoluntario.put(log.getMision(), Long.valueOf(1));
+				Mision count = new Mision("voluntariosMisiones", log.getDate(), Long.valueOf(0), log.getMision(),
+						log.getLocation(), log.getEmergencia());
+				this.classVoluntario.put(log.getMision(), count);
+			}
+		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
+			this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) - 1));
 		}
+
 	}
 
 	/**
@@ -78,7 +80,8 @@ public class Delay implements IRichBolt {
 	public void cleanup() {
 		logger.info("Close " + this.getClass().getSimpleName());
 
-//		this.emitTask.shutdown();
+		this.emitTask.cancel();
+		this.emitTask.purge();
 	}
 
 	/**
@@ -86,7 +89,7 @@ public class Delay implements IRichBolt {
 	 */
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		outputFieldsDeclarer.declare(new Fields("log"));
+		outputFieldsDeclarer.declare(new Fields("mision"));
 	}
 
 	/**
@@ -104,11 +107,14 @@ public class Delay implements IRichBolt {
 	 * contados por el bolt
 	 */
 	private class EmitTask extends TimerTask {
-		private final Map<Long, List<Log>> timestamp;
+		private final Map<String, Long> countNum;
+		private final Map<String, Mision> classVoluntario;
 		private final OutputCollector outputCollector;
 
-		public EmitTask(Map<Long, List<Log>> timestamp, OutputCollector outputCollector) {
-			this.timestamp = timestamp;
+		public EmitTask(Map<String, Long> countNum, Map<String, Mision> classVoluntario,
+				OutputCollector outputCollector) {
+			this.countNum = countNum;
+			this.classVoluntario = classVoluntario;
 			this.outputCollector = outputCollector;
 		}
 
@@ -119,31 +125,14 @@ public class Delay implements IRichBolt {
 		@Override
 		public void run() {
 
-			/*
-			 * Crear un snapshot del contador, para posteriormente enviar las
-			 * estadísticas
-			 */
-			Map<Long, List<Log>> snapshotTimestamp;
-			synchronized (this.timestamp) {
-				snapshotTimestamp = new HashMap<Long, List<Log>>(this.timestamp);
+			Map<String, Long> snapshotCountNum;
+			synchronized (this.countNum) {
+				snapshotCountNum = new HashMap<String, Long>(this.countNum);
 			}
 
-			if (snapshotTimestamp.containsKey(init)) {
-				List<Log> logsCurrent;
-				synchronized (snapshotTimestamp.get(init)) {
-					logsCurrent = snapshotTimestamp.get(init);
-				}
-
-				for (Log log : logsCurrent) {
-					// if (log.getAccion().equals("INIT_MISSION")) {
-					// logger.info("INIT_MISSION");
-					// }
-					this.outputCollector.emit(new Values(log));
-				}
-
-				init += 1;
-			} else {
-				init += 1;
+			for (Mision mision : classVoluntario.values()) {
+				mision.setCount(snapshotCountNum.get(mision.getMision()));
+				this.outputCollector.emit(new Values(mision));
 			}
 
 		}
