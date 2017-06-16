@@ -24,11 +24,11 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
-public class MisionesActivas implements IRichBolt {
+public class MisionesEspera implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
 
-	private static Logger logger = LoggerFactory.getLogger(MisionesActivas.class);
+	private static Logger logger = LoggerFactory.getLogger(MisionesEspera.class);
 
 	private OutputCollector outputCollector;
 	private Map mapConf;
@@ -36,11 +36,13 @@ public class MisionesActivas implements IRichBolt {
 	private Timer emitTask;
 	private long timeDelay;
 	private long emitTimeframe;
+
 	private Long count;
 	private Long rateMision;
+	private Long total;
 	private Long timestampCurrent;
 
-	public MisionesActivas(long timeDelay, long emitTimeframe) {
+	public MisionesEspera(long timeDelay, long emitTimeframe) {
 		this.timeDelay = timeDelay;
 		this.emitTimeframe = emitTimeframe;
 	}
@@ -51,6 +53,7 @@ public class MisionesActivas implements IRichBolt {
 		this.outputCollector = outputCollector;
 
 		this.count = Long.valueOf(0);
+		this.total = Long.valueOf(0);
 
 		this.rateMision = Long.valueOf(0);
 		this.timestampCurrent = Long.valueOf(1397328001);
@@ -64,9 +67,10 @@ public class MisionesActivas implements IRichBolt {
 		Log log = (Log) tuple.getValueByField("log");
 
 		if (log.getAccion().equals("CREATE_MISSION")) {
+			total++;
 			rateMision++;
 			timestampCurrent = log.getTimestamp();
-		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("COORDINATOR")) {
+		} else if (log.getAccion().equals("INIT_MISSION") && log.getTipoUsuario().equals("COORDINATOR")) {
 			rateMision--;
 			timestampCurrent = log.getTimestamp();
 		}
@@ -121,11 +125,16 @@ public class MisionesActivas implements IRichBolt {
 		public void run() {
 
 			count += rateMision;
+			if (rateMision < 0) {
+				rateMision = Long.valueOf(0);
+			}
 
-			Count acum = new Count("misionesCount", ParseDate.parse(timestampCurrent), count);
-			Count rate = new Count("misionesRate", ParseDate.parse(timestampCurrent), rateMision);
+			Count acum = new Count("misionesEsperaCount", ParseDate.parse(timestampCurrent), count);
+			Count rate = new Count("misionesEsperaRate", ParseDate.parse(timestampCurrent), rateMision);
+			Count sum = new Count("misionesTotalesCount", ParseDate.parse(timestampCurrent), total);
 			this.outputCollector.emit(acum.factoryCount());
 			this.outputCollector.emit(rate.factoryCount());
+			this.outputCollector.emit(sum.factoryCount());
 
 			rateMision = Long.valueOf(0);
 

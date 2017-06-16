@@ -30,7 +30,7 @@ public class LogsSpout implements IRichSpout {
 	private SpoutOutputCollector collector;
 	private Map conf;
 
-	private static final int delay = 1;
+	private static final int delay = 10;
 
 	private Long init = new Long("1397328001");
 
@@ -77,7 +77,7 @@ public class LogsSpout implements IRichSpout {
 	public void open(Map arg0, TopologyContext arg1, SpoutOutputCollector collector) {
 		Palabras palabras = new Palabras();
 		logger.info("Init");
-		stack = palabras.leerDiccionario("logs/xaa");
+		stack = palabras.leerDiccionario("logs/ayni.log");
 		timestamp = parseMap(stack);
 		logger.info("Finish");
 		this.collector = collector;

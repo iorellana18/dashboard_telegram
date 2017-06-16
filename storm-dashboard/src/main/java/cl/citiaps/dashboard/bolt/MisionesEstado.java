@@ -24,11 +24,11 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
-public class MisionesIniciadas implements IRichBolt {
+public class MisionesEstado implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
 
-	private static Logger logger = LoggerFactory.getLogger(MisionesIniciadas.class);
+	private static Logger logger = LoggerFactory.getLogger(MisionesEstado.class);
 
 	private OutputCollector outputCollector;
 	private Map mapConf;
@@ -37,11 +37,15 @@ public class MisionesIniciadas implements IRichBolt {
 	private long timeDelay;
 	private long emitTimeframe;
 
-	private Long count;
-	private Long rateMision;
+	private Long countInit;
+	private Long rateMisionInit;
+
+	private Long countFinish;
+	private Long rateMisionFinish;
+
 	private Long timestampCurrent;
 
-	public MisionesIniciadas(long timeDelay, long emitTimeframe) {
+	public MisionesEstado(long timeDelay, long emitTimeframe) {
 		this.timeDelay = timeDelay;
 		this.emitTimeframe = emitTimeframe;
 	}
@@ -51,9 +55,12 @@ public class MisionesIniciadas implements IRichBolt {
 		this.mapConf = mapConf;
 		this.outputCollector = outputCollector;
 
-		this.count = Long.valueOf(0);
+		this.countInit = Long.valueOf(0);
+		this.rateMisionInit = Long.valueOf(0);
 
-		this.rateMision = Long.valueOf(0);
+		this.countFinish = Long.valueOf(0);
+		this.rateMisionFinish = Long.valueOf(0);
+
 		this.timestampCurrent = Long.valueOf(1397328001);
 
 		this.emitTask = new Timer();
@@ -65,7 +72,11 @@ public class MisionesIniciadas implements IRichBolt {
 		Log log = (Log) tuple.getValueByField("log");
 
 		if (log.getAccion().equals("INIT_MISSION") && log.getTipoUsuario().equals("COORDINATOR")) {
-			rateMision++;
+			rateMisionInit++;
+			timestampCurrent = log.getTimestamp();
+		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("COORDINATOR")) {
+			rateMisionInit--;
+			rateMisionFinish++;
 			timestampCurrent = log.getTimestamp();
 		}
 
@@ -117,15 +128,31 @@ public class MisionesIniciadas implements IRichBolt {
 		 */
 		@Override
 		public void run() {
+			/**
+			 * Cantidad de misiones inicializadas
+			 */
 
-			count += rateMision;
+			countInit += rateMisionInit;
 
-			Count acum = new Count("misionesIniciadasCount", ParseDate.parse(timestampCurrent), count);
-			Count rate = new Count("misionesIniciadasRate", ParseDate.parse(timestampCurrent), rateMision);
-			this.outputCollector.emit(acum.factoryCount());
-			this.outputCollector.emit(rate.factoryCount());
+			Count acumInit = new Count("misionesIniciadasCount", ParseDate.parse(timestampCurrent), countInit);
+			Count rateInit = new Count("misionesIniciadasRate", ParseDate.parse(timestampCurrent), rateMisionInit);
+			this.outputCollector.emit(acumInit.factoryCount());
+			this.outputCollector.emit(rateInit.factoryCount());
 
-			rateMision = Long.valueOf(0);
+			rateMisionInit = Long.valueOf(0);
+
+			/**
+			 * Cantidad de misiones finalizadas
+			 */
+
+			countFinish += rateMisionFinish;
+
+			Count acumFinish = new Count("misionesTerminadasCount", ParseDate.parse(timestampCurrent), countFinish);
+			Count rateFinish = new Count("misionesTerminadasRate", ParseDate.parse(timestampCurrent), rateMisionFinish);
+			this.outputCollector.emit(acumFinish.factoryCount());
+			this.outputCollector.emit(rateFinish.factoryCount());
+
+			rateMisionInit = Long.valueOf(0);
 
 		}
 
