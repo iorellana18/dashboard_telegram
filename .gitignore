@@ -1,0 +1,11 @@
+# Logs
+simulator-logs/*.log
+storm-dashboard/logs
+
+# Folders
+storm-dashboard/.settings
+storm-dashboard/target
+
+# Configuration
+storm-dashboard/.classpath
+storm-dashboard/.project

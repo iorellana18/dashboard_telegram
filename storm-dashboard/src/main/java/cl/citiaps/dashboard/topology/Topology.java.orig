@@ -38,11 +38,18 @@ public class Topology {
 		builder.setSpout("LogsSpout", new LogsSpout(), 1);
 
 		// builder.setBolt("MisionesActivas", new MisionesActivas(5,
+<<<<<<< HEAD
 		// 5)).shuffleGrouping("LogsSpout");
+=======
+		// 5)).shuffleGrouping("LogsSpout"); 
+		// builder.setBolt("ResponderMision", new ResponderMision(5, 5)).shuffleGrouping("LogsSpout");
+		// builder.setBolt("InicializarMision", new InicializarMision(5, 5)).shuffleGrouping("LogsSpout");
+>>>>>>> 7381a34a4886295062c46a80d24c2e4106b43e81
 		// builder.setBolt("MisionesFinalizadas", new MisionesFinalizadas(5,
 		// 5)).shuffleGrouping("LogsSpout");
 		// builder.setBolt("MisionesIniciadas", new MisionesIniciadas(5,
 		// 5)).shuffleGrouping("LogsSpout");
+<<<<<<< HEAD
 		builder.setBolt("VoluntariosActivos", new VoluntariosActivos(5, 5)).shuffleGrouping("LogsSpout");
 		// builder.setBolt("VoluntariosMisiones", new VoluntariosMisiones(5,
 		// 5)).shuffleGrouping("LogsSpout");
@@ -54,6 +61,23 @@ public class Topology {
 		// .shuffleGrouping("MisionesActivas").shuffleGrouping("MisionesFinalizadas")
 		// .shuffleGrouping("MisionesIniciadas").shuffleGrouping("VoluntariosActivos")
 		// .shuffleGrouping("VoluntariosMisiones").shuffleGrouping("VoluntariosRechazan");
+=======
+		// builder.setBolt("VoluntariosActivos", new VoluntariosActivos(5,
+		// 5)).shuffleGrouping("LogsSpout");
+		// builder.setBolt("VoluntariosMisiones", new VoluntariosMisiones(5,
+		// 5)).shuffleGrouping("LogsSpout");
+		 builder.setBolt("VoluntariosRechazan", new VoluntariosRechazan(5,
+		 5)).shuffleGrouping("LogsSpout");
+
+		// builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158",
+		// 9300, "cluster"))
+		// .shuffleGrouping("MisionesActivas").shuffleGrouping("MisionesFinalizadas")
+		// .shuffleGrouping("MisionesIniciadas").shuffleGrouping("VoluntariosActivos")
+		// .shuffleGrouping("VoluntariosMisiones").shuffleGrouping("VoluntariosRechazan");
+
+		builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158", 9300, "cluster"))
+				.shuffleGrouping("VoluntariosRechazan");
+>>>>>>> 7381a34a4886295062c46a80d24c2e4106b43e81
 
 		if (args != null && args.length > 0) {
 			try {
