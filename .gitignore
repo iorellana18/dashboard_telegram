@@ -1,6 +1,6 @@
 # Logs
 simulator-logs/*.log
-storm-dashboard/logs/
+storm-dashboard/logs/workers-artifacts
 
 # Folders
 storm-dashboard/.settings
