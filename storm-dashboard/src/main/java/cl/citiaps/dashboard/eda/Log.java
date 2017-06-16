@@ -19,22 +19,22 @@ public class Log {
 	private String mision;
 	private String location;
 	private String emergencia;
+	private String idMision;
 
 	public Log(String text) {
 		String[] parser = text.split(" ");
-		if (parser.length == 11) { // Hay sólo una línea con 10 datos
-			Date timeStamp = new Date(Long.valueOf(parser[0]));
-			setTimestamp(Long.valueOf(parser[0]) / 1000);
-			TimeZone timeZone = TimeZone.getTimeZone("UTC");
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-			dateFormat.setTimeZone(timeZone);
-			setDate(dateFormat.format(timeStamp));
-			// setTimestamp(parser[0]);
-			setTipoUsuario(parser[1]);
-			setIdUsuario(parser[2]);
-			setAccion(parser[3]);
-			setMision(parser[4]);
-			setLocation(parser[6] + "," + parser[8]);
+		Date timeStamp = new Date(Long.valueOf(parser[0]));
+		setTimestamp(Long.valueOf(parser[0]) / 1000);
+		TimeZone timeZone = TimeZone.getTimeZone("UTC");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+		dateFormat.setTimeZone(timeZone);
+		setDate(dateFormat.format(timeStamp));
+		setTipoUsuario(parser[1]);
+		setIdUsuario(parser[2]);
+		setAccion(parser[3]);
+		setMision(parser[4]);
+		setLocation(parser[6] + "," + parser[8]);
+		if (parser.length == 11) { // Ya que quien crea emergencia no tiene estos datos
 			String[] parseEmergencia = parser[10].split("\\(");
 			setEmergencia(parseEmergencia[0]);
 		}
@@ -112,6 +112,14 @@ public class Log {
 	public String toString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
+	}
+
+	public String getIdMision() {
+		return idMision;
+	}
+
+	public void setIdMision(String idMision) {
+		this.idMision = idMision;
 	}
 
 }

@@ -36,7 +36,6 @@ public class MisionesActivas implements IRichBolt {
 	private Timer emitTask;
 	private long timeDelay;
 	private long emitTimeframe;
-
 	private Long count;
 	private Long rateMision;
 	private Long timestampCurrent;

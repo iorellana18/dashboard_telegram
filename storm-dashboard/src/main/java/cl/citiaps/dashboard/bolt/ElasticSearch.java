@@ -64,7 +64,8 @@ public class ElasticSearch implements IRichBolt {
 			Map<String, Object> map = oMapper.convertValue(log, new TypeReference<Map<String, String>>() {
 			});
 
-			IndexResponse response = transportClient.prepareIndex("onemi", "mission").setSource(map).get();
+			// IndexResponse response = transportClient.prepareIndex("onemi",
+			// "mission").setSource(map).get();
 
 		} else if (tuple.contains("count")) {
 			Count count = (Count) tuple.getValueByField("count");
@@ -73,8 +74,9 @@ public class ElasticSearch implements IRichBolt {
 			});
 			logger.info("{}", map);
 
-			IndexResponse response = transportClient.prepareIndex("onemi", "count").setSource(map).get();
-			logger.info("{}", response);
+			// IndexResponse response = transportClient.prepareIndex("onemi",
+			// "count").setSource(map).get();
+			// logger.info("{}", response);
 		} else if (tuple.contains("mision")) {
 			Mision mision = (Mision) tuple.getValueByField("mision");
 
@@ -82,8 +84,9 @@ public class ElasticSearch implements IRichBolt {
 			});
 			logger.info("{}", map);
 
-			IndexResponse response = transportClient.prepareIndex("onemi", "mision").setSource(map).get();
-			logger.info("{}", response);
+			// IndexResponse response = transportClient.prepareIndex("onemi",
+			// "mision").setSource(map).get();
+			// logger.info("{}", response);
 		}
 	}
 

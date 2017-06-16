@@ -10,9 +10,11 @@ import cl.citiaps.dashboard.bolt.VoluntariosMisiones;
 import cl.citiaps.dashboard.bolt.VoluntariosRechazan;
 import cl.citiaps.dashboard.spout.LogsSpout;
 import cl.citiaps.dashboard.bolt.ElasticSearch;
+import cl.citiaps.dashboard.bolt.InicializarMision;
 import cl.citiaps.dashboard.bolt.MisionesActivas;
 import cl.citiaps.dashboard.bolt.MisionesFinalizadas;
 import cl.citiaps.dashboard.bolt.MisionesIniciadas;
+import cl.citiaps.dashboard.bolt.ResponderMision;
 
 public class Topology {
 	private static final String TOPOLOGY_NAME = "dashboard";
@@ -35,17 +37,29 @@ public class Topology {
 		// builder.setSpout("LogsSpout", kafkaSpout, 1);
 		builder.setSpout("LogsSpout", new LogsSpout(), 1);
 
-		builder.setBolt("MisionesActivas", new MisionesActivas(5, 5)).shuffleGrouping("LogsSpout");
-		builder.setBolt("MisionesFinalizadas", new MisionesFinalizadas(5, 5)).shuffleGrouping("LogsSpout");
-		builder.setBolt("MisionesIniciadas", new MisionesIniciadas(5, 5)).shuffleGrouping("LogsSpout");
-		builder.setBolt("VoluntariosActivos", new VoluntariosActivos(5, 5)).shuffleGrouping("LogsSpout");
-		builder.setBolt("VoluntariosMisiones", new VoluntariosMisiones(5, 5)).shuffleGrouping("LogsSpout");
-		builder.setBolt("VoluntariosRechazan", new VoluntariosRechazan(5, 5)).shuffleGrouping("LogsSpout");
+		// builder.setBolt("MisionesActivas", new MisionesActivas(5,
+		// 5)).shuffleGrouping("LogsSpout"); 
+		// builder.setBolt("ResponderMision", new ResponderMision(5, 5)).shuffleGrouping("LogsSpout");
+		// builder.setBolt("InicializarMision", new InicializarMision(5, 5)).shuffleGrouping("LogsSpout");
+		// builder.setBolt("MisionesFinalizadas", new MisionesFinalizadas(5,
+		// 5)).shuffleGrouping("LogsSpout");
+		// builder.setBolt("MisionesIniciadas", new MisionesIniciadas(5,
+		// 5)).shuffleGrouping("LogsSpout");
+		// builder.setBolt("VoluntariosActivos", new VoluntariosActivos(5,
+		// 5)).shuffleGrouping("LogsSpout");
+		// builder.setBolt("VoluntariosMisiones", new VoluntariosMisiones(5,
+		// 5)).shuffleGrouping("LogsSpout");
+		 builder.setBolt("VoluntariosRechazan", new VoluntariosRechazan(5,
+		 5)).shuffleGrouping("LogsSpout");
+
+		// builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158",
+		// 9300, "cluster"))
+		// .shuffleGrouping("MisionesActivas").shuffleGrouping("MisionesFinalizadas")
+		// .shuffleGrouping("MisionesIniciadas").shuffleGrouping("VoluntariosActivos")
+		// .shuffleGrouping("VoluntariosMisiones").shuffleGrouping("VoluntariosRechazan");
 
 		builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158", 9300, "cluster"))
-				.shuffleGrouping("MisionesActivas").shuffleGrouping("MisionesFinalizadas")
-				.shuffleGrouping("MisionesIniciadas").shuffleGrouping("VoluntariosActivos")
-				.shuffleGrouping("VoluntariosMisiones").shuffleGrouping("VoluntariosRechazan");
+				.shuffleGrouping("VoluntariosRechazan");
 
 		if (args != null && args.length > 0) {
 			try {
