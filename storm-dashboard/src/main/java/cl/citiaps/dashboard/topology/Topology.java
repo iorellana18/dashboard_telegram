@@ -8,6 +8,8 @@ import org.apache.storm.topology.TopologyBuilder;
 import cl.citiaps.dashboard.bolt.VoluntariosActivos;
 import cl.citiaps.dashboard.bolt.VoluntariosMisiones;
 import cl.citiaps.dashboard.bolt.VoluntariosRechazan;
+import cl.citiaps.dashboard.bolt.cuentaFinalizados;
+import cl.citiaps.dashboard.bolt.cuentaRechazos;
 import cl.citiaps.dashboard.spout.LogsSpout;
 import cl.citiaps.dashboard.bolt.ElasticSearch;
 import cl.citiaps.dashboard.bolt.InicializarMision;
@@ -36,8 +38,8 @@ public class Topology {
 		// builder.setSpout("LogsSpout", kafkaSpout, 1);
 		builder.setSpout("LogsSpout", new LogsSpout(), 1);
 
-		builder.setBolt("ResponderMision", new ResponderMision(5, 5)).shuffleGrouping("LogsSpout");
-		builder.setBolt("InicializarMision", new InicializarMision(5, 5)).shuffleGrouping("LogsSpout");
+		//builder.setBolt("ResponderMision", new ResponderMision(5, 5)).shuffleGrouping("LogsSpout");
+		//builder.setBolt("InicializarMision", new InicializarMision(5, 5)).shuffleGrouping("LogsSpout");
 		// builder.setBolt("MisionesEstado", new MisionesEstado(5,
 		// 5)).shuffleGrouping("LogsSpout");
 		// builder.setBolt("VoluntariosActivos", new VoluntariosActivos(5,
@@ -47,11 +49,18 @@ public class Topology {
 		// builder.setBolt("VoluntariosRechazan", new VoluntariosRechazan(5,
 		// 5)).shuffleGrouping("LogsSpout");
 
-		builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158", 9300, "cluster"))
-				.shuffleGrouping("ResponderMision").shuffleGrouping("InicializarMision");
+		// Revisar
+		//builder.setBolt("cuentaRechazos", new cuentaRechazos(5, 5)).shuffleGrouping("LogsSpout");
+		builder.setBolt("cuentaFinalizados", new cuentaFinalizados(5, 5)).shuffleGrouping("LogsSpout");
+		
+		
+		//builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158", 9300, "cluster"))
+		//		.shuffleGrouping("cuentaRechazos");
 		// .shuffleGrouping("MisionesActivas").shuffleGrouping("MisionesFinalizadas")
 		// .shuffleGrouping("MisionesIniciadas").shuffleGrouping("VoluntariosActivos")
 		// .shuffleGrouping("VoluntariosMisiones").shuffleGrouping("VoluntariosRechazan");
+		
+		
 
 		if (args != null && args.length > 0) {
 			try {
