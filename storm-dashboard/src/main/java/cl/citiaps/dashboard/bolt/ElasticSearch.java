@@ -10,6 +10,7 @@ import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Tuple;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -40,11 +41,14 @@ public class ElasticSearch implements IRichBolt {
 	private String IP;
 	private int port;
 	private String clusterName;
+	
+	private String index;
 
-	public ElasticSearch(String IP, int port, String clusterName) {
+	public ElasticSearch(String IP, int port, String clusterName, String index) {
 		this.IP = IP;
 		this.port = port;
 		this.clusterName = clusterName;
+		this.index = index;
 	}
 
 	@Override
@@ -64,8 +68,7 @@ public class ElasticSearch implements IRichBolt {
 			Map<String, Object> map = oMapper.convertValue(log, new TypeReference<Map<String, String>>() {
 			});
 
-			// IndexResponse response = transportClient.prepareIndex("onemi",
-			// "mission").setSource(map).get();
+			IndexResponse response = transportClient.prepareIndex(index, "mission").setSource(map).get();
 
 		} else if (tuple.contains("count")) {
 			Count count = (Count) tuple.getValueByField("count");
@@ -74,9 +77,8 @@ public class ElasticSearch implements IRichBolt {
 			});
 			logger.info("{}", map);
 
-			// IndexResponse response = transportClient.prepareIndex("onemi",
-			// "count").setSource(map).get();
-			// logger.info("{}", response);
+			IndexResponse response = transportClient.prepareIndex(index, "count").setSource(map).get();
+			logger.info("{}", response);
 		} else if (tuple.contains("mision")) {
 			Mision mision = (Mision) tuple.getValueByField("mision");
 
@@ -84,9 +86,10 @@ public class ElasticSearch implements IRichBolt {
 			});
 			logger.info("{}", map);
 
-			// IndexResponse response = transportClient.prepareIndex("onemi",
-			// "mision").setSource(map).get();
-			// logger.info("{}", response);
+			IndexResponse response = transportClient.prepareIndex(index, "mision").setSource(map).get();
+			// UpdateResponse response = transportClient.prepareUpdate("onemi",
+			// "mision").setDoc(map).get();
+			logger.info("{}", response);
 		}
 	}
 

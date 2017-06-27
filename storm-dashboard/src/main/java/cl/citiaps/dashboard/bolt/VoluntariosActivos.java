@@ -54,7 +54,7 @@ public class VoluntariosActivos implements IRichBolt {
 		this.count = Long.valueOf(0);
 
 		this.rateVoluntario = Long.valueOf(0);
-		this.timestampCurrent = Long.valueOf(1397328001);
+		this.timestampCurrent = new Date().getTime();
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(new EmitTask(this.outputCollector), timeDelay * 1000, emitTimeframe * 1000);

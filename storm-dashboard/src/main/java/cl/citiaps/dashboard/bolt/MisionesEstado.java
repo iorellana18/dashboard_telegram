@@ -1,14 +1,10 @@
 package cl.citiaps.dashboard.bolt;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -16,7 +12,6 @@ import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
-import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +33,10 @@ public class MisionesEstado implements IRichBolt {
 	private long emitTimeframe;
 
 	private Long countInit;
-	private Long rateMisionInit;
+	private AtomicLong rateMisionInit;
 
 	private Long countFinish;
-	private Long rateMisionFinish;
+	private AtomicLong rateMisionFinish;
 
 	private Long timestampCurrent;
 
@@ -56,12 +51,12 @@ public class MisionesEstado implements IRichBolt {
 		this.outputCollector = outputCollector;
 
 		this.countInit = Long.valueOf(0);
-		this.rateMisionInit = Long.valueOf(0);
+		this.rateMisionInit = new AtomicLong(0);
 
 		this.countFinish = Long.valueOf(0);
-		this.rateMisionFinish = Long.valueOf(0);
+		this.rateMisionFinish = new AtomicLong(0);
 
-		this.timestampCurrent = Long.valueOf(1397328001);
+		this.timestampCurrent = new Date().getTime();
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(new EmitTask(this.outputCollector), timeDelay * 1000, emitTimeframe * 1000);
@@ -72,11 +67,11 @@ public class MisionesEstado implements IRichBolt {
 		Log log = (Log) tuple.getValueByField("log");
 
 		if (log.getAccion().equals("INIT_MISSION") && log.getTipoUsuario().equals("COORDINATOR")) {
-			rateMisionInit++;
+			rateMisionInit.getAndIncrement();
 			timestampCurrent = log.getTimestamp();
 		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("COORDINATOR")) {
-			rateMisionInit--;
-			rateMisionFinish++;
+			rateMisionInit.getAndDecrement();
+			rateMisionFinish.getAndIncrement();
 			timestampCurrent = log.getTimestamp();
 		}
 
@@ -118,8 +113,20 @@ public class MisionesEstado implements IRichBolt {
 	private class EmitTask extends TimerTask {
 		private final OutputCollector outputCollector;
 
+		private long previousSnapshotInit;
+		private long previousSnapshotFinish;
+
+		private long rateInit;
+		private long rateFinish;
+
 		public EmitTask(OutputCollector outputCollector) {
 			this.outputCollector = outputCollector;
+
+			this.previousSnapshotInit = 0;
+			this.previousSnapshotFinish = 0;
+
+			this.rateInit = 0;
+			this.rateFinish = 0;
 		}
 
 		/**
@@ -131,29 +138,32 @@ public class MisionesEstado implements IRichBolt {
 			/**
 			 * Cantidad de misiones inicializadas
 			 */
+			long snapshotInit = rateMisionInit.get();
+			long snapshotFinish = rateMisionFinish.get();
 
-			countInit += rateMisionInit;
+			this.rateInit = snapshotInit - this.previousSnapshotInit;
+			this.previousSnapshotInit = snapshotInit;
+
+			this.rateFinish = snapshotFinish - this.previousSnapshotFinish;
+			this.previousSnapshotFinish = snapshotFinish;
+
+			countInit = snapshotInit;
 
 			Count acumInit = new Count("misionesIniciadasCount", ParseDate.parse(timestampCurrent), countInit);
-			Count rateInit = new Count("misionesIniciadasRate", ParseDate.parse(timestampCurrent), rateMisionInit);
+			Count rateInit = new Count("misionesIniciadasRate", ParseDate.parse(timestampCurrent), this.rateInit);
 			this.outputCollector.emit(acumInit.factoryCount());
 			this.outputCollector.emit(rateInit.factoryCount());
-
-			rateMisionInit = Long.valueOf(0);
 
 			/**
 			 * Cantidad de misiones finalizadas
 			 */
 
-			countFinish += rateMisionFinish;
+			countFinish = snapshotFinish;
 
 			Count acumFinish = new Count("misionesTerminadasCount", ParseDate.parse(timestampCurrent), countFinish);
-			Count rateFinish = new Count("misionesTerminadasRate", ParseDate.parse(timestampCurrent), rateMisionFinish);
+			Count rateFinish = new Count("misionesTerminadasRate", ParseDate.parse(timestampCurrent), this.rateFinish);
 			this.outputCollector.emit(acumFinish.factoryCount());
 			this.outputCollector.emit(rateFinish.factoryCount());
-
-			rateMisionInit = Long.valueOf(0);
-
 		}
 
 	}

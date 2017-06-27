@@ -1,6 +1,7 @@
 package cl.citiaps.dashboard.bolt;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -82,7 +83,7 @@ public class InicializarMision implements IRichBolt {
 		this.emitTask.scheduleAtFixedRate(new EmitTask(this.outputCollector), timeDelay * 1000, emitTimeframe * 1000);
 
 		this.timeMisions = new HashMap<String, Long>();
-		this.timestampCurrent = Long.valueOf(1397328001);
+		this.timestampCurrent = new Date().getTime();
 		this.stats = new SummaryStatistics();
 	}
 

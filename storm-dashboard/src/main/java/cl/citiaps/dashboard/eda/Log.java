@@ -23,8 +23,8 @@ public class Log {
 
 	public Log(String text) {
 		String[] parser = text.split(" ");
-		Date timeStamp = new Date(Long.valueOf(parser[0]));
-		setTimestamp(Long.valueOf(parser[0]) / 1000);
+		Date timeStamp = new Date();
+		setTimestamp(timeStamp.getTime());
 		TimeZone timeZone = TimeZone.getTimeZone("UTC");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 		dateFormat.setTimeZone(timeZone);
@@ -34,7 +34,8 @@ public class Log {
 		setAccion(parser[3]);
 		setMision(parser[4]);
 		setLocation(parser[6] + "," + parser[8]);
-		if (parser.length == 11) { // Ya que quien crea emergencia no tiene estos datos
+		if (parser.length == 11) { // Ya que quien crea emergencia no tiene
+									// estos datos
 			String[] parseEmergencia = parser[10].split("\\(");
 			setEmergencia(parseEmergencia[0]);
 		}

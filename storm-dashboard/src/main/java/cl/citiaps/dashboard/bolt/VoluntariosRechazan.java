@@ -24,6 +24,14 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
+/**
+ * Voluntarios Rechazan: En este Bolt se consideran la cantidad de voluntarios
+ * que rechazan
+ * 
+ * @author daniel
+ *
+ */
+
 public class VoluntariosRechazan implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
@@ -55,7 +63,7 @@ public class VoluntariosRechazan implements IRichBolt {
 		this.count = Long.valueOf(0);
 
 		this.rateVoluntario = Long.valueOf(0);
-		this.timestampCurrent = Long.valueOf(1397328001);
+		this.timestampCurrent = new Date().getTime();
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(new EmitTask(this.outputCollector), timeDelay * 1000, emitTimeframe * 1000);
@@ -64,8 +72,9 @@ public class VoluntariosRechazan implements IRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-		if(log.getAccion().equals("INVITATION_TO_MISSION")){
+		if (log.getAccion().equals("INVITATION_TO_MISSION")) {
 			totales++;
+			timestampCurrent = log.getTimestamp();
 		}
 		if (log.getAccion().equals("REJECT_MISSION")) {
 			rateVoluntario++;
@@ -126,12 +135,12 @@ public class VoluntariosRechazan implements IRichBolt {
 			Count acum = new Count("voluntariosRechazanCount", ParseDate.parse(timestampCurrent), count);
 			Count rate = new Count("voluntariosRechazanRate", ParseDate.parse(timestampCurrent), rateVoluntario);
 			Count total = new Count("voluntariosTotales", ParseDate.parse(timestampCurrent), totales);
-			
+
 			this.outputCollector.emit(acum.factoryCount());
 			this.outputCollector.emit(rate.factoryCount());
 			this.outputCollector.emit(total.factoryCount());
-			if(totales>0){
-				Count porcentaje = new Count("PorcentajeRechazo", ParseDate.parse(timestampCurrent), (count*100/totales));
+			if (totales > 0) {
+				Count porcentaje = new Count("PorcentajeRechazo", ParseDate.parse(timestampCurrent), (count / totales));
 				this.outputCollector.emit(porcentaje.factoryCount());
 			}
 

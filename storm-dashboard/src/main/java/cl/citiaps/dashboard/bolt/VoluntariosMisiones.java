@@ -1,6 +1,7 @@
 package cl.citiaps.dashboard.bolt;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -128,6 +129,7 @@ public class VoluntariosMisiones implements IRichBolt {
 			Map<String, Long> snapshotCountNum;
 			synchronized (this.countNum) {
 				snapshotCountNum = new HashMap<String, Long>(this.countNum);
+				this.countNum.clear();
 			}
 
 			for (Mision mision : classVoluntario.values()) {
