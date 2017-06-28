@@ -21,6 +21,15 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
+/*****
+ * Bolt que muestra datos sobre tiempo entre la creación e inicio de misiones 
+ * Datos que envía:
+ * * Tiempo promedio en iniciar misión
+ * * Tiempo máximo en inicio de misiones 
+ * * Tiempo mínimo en inicio de misiones
+ * * Desviación estándar del tiempo de inicio de misiones
+******/
+
 public class InicializarMision implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;

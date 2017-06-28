@@ -19,6 +19,15 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
+/*****
+ * Bolt que misiones rechazadas por voluntarios que no hayan sido de forma automática por haber aceptado otra
+ * Datos que envía:
+ * * Cantidad misiones rechazadas
+ * * Cantidad de voluntarios
+ * * Porcentaje de rechazo
+******/
+
+
 public class CuentaRechazos implements IRichBolt  {
 
 	private static final long serialVersionUID = 7784329420249780555L;

@@ -26,7 +26,7 @@ import cl.citiaps.dashboard.bolt.VoluntariosRechazan;
 public class Topology {
 	public static void main(String[] args) {
 		String topicName = args[1];
-		BrokerHosts hosts = new ZkHosts("158.170.140.28:2181");
+		BrokerHosts hosts = new ZkHosts("158.170.169.205:2181");
 		SpoutConfig spoutConfig = new SpoutConfig(hosts, topicName, "/" + topicName, UUID.randomUUID().toString());
 		spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
 		KafkaSpout kafkaSpout = new KafkaSpout(spoutConfig);

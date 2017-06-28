@@ -24,13 +24,12 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
-/**
- * Voluntarios Rechazan: En este Bolt se consideran la cantidad de voluntarios
- * que rechazan
- * 
- * @author daniel
- *
- */
+/*****
+ * Bolt que cuenta la cantidad de voluntarios que rechazan misiones ("REJECT_MISSION")
+ * Datos que envía:
+ * * Cantidad de voluntarios que rechazan mision
+ * * Cantidad de voluntarios que rechazan mision por ventana de tiempo
+******/
 
 public class VoluntariosRechazan implements IRichBolt {
 
@@ -46,7 +45,6 @@ public class VoluntariosRechazan implements IRichBolt {
 	private long emitTimeframe;
 
 	private Long count;
-	private Long totales;
 	private Long rateVoluntario;
 	private Long timestampCurrent;
 
@@ -59,7 +57,6 @@ public class VoluntariosRechazan implements IRichBolt {
 	public void prepare(Map mapConf, TopologyContext topologyContext, OutputCollector outputCollector) {
 		this.mapConf = mapConf;
 		this.outputCollector = outputCollector;
-		this.totales = Long.valueOf(0);
 		this.count = Long.valueOf(0);
 
 		this.rateVoluntario = Long.valueOf(0);
@@ -72,10 +69,6 @@ public class VoluntariosRechazan implements IRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-		if (log.getAccion().equals("INVITATION_TO_MISSION")) {
-			totales++;
-			timestampCurrent = log.getTimestamp();
-		}
 		if (log.getAccion().equals("REJECT_MISSION")) {
 			rateVoluntario++;
 			timestampCurrent = log.getTimestamp();
@@ -134,15 +127,9 @@ public class VoluntariosRechazan implements IRichBolt {
 
 			Count acum = new Count("voluntariosRechazanCount", ParseDate.parse(timestampCurrent), count);
 			Count rate = new Count("voluntariosRechazanRate", ParseDate.parse(timestampCurrent), rateVoluntario);
-			Count total = new Count("voluntariosTotales", ParseDate.parse(timestampCurrent), totales);
 
 			this.outputCollector.emit(acum.factoryCount());
 			this.outputCollector.emit(rate.factoryCount());
-			this.outputCollector.emit(total.factoryCount());
-			if (totales > 0) {
-				Count porcentaje = new Count("PorcentajeRechazo", ParseDate.parse(timestampCurrent), (count / totales));
-				this.outputCollector.emit(porcentaje.factoryCount());
-			}
 
 			rateVoluntario = Long.valueOf(0);
 

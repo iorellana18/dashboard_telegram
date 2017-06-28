@@ -19,6 +19,16 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
+/*****
+ * Bolt que cuenta las misiones que se mantienen activas (entre INIT_MISSION y FINISH_MISSION)
+ * Datos que envía:
+ * * Cantidad de misiones activas
+ * * Cantidad de misiones iniciadas por ventana de tiempo
+ * * Cantidad de misiones finalizadas
+ * * Cantidad de misiones finalziadas por ventana de tiempo
+******/
+
+
 public class MisionesEstado implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
@@ -65,9 +75,10 @@ public class MisionesEstado implements IRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-
+		System.out.println("Entrada");
 		if (log.getAccion().equals("INIT_MISSION") && log.getTipoUsuario().equals("COORDINATOR")) {
 			rateMisionInit.getAndIncrement();
+			System.out.println("Entra : "+rateMisionInit.get()+" a mision "+log.getMision());
 			timestampCurrent = log.getTimestamp();
 		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("COORDINATOR")) {
 			rateMisionInit.getAndDecrement();

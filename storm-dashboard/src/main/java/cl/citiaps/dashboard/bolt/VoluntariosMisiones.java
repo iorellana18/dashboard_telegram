@@ -21,6 +21,13 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.eda.Mision;
 
+
+/*****
+ * Bolt que envía cantidad de misiones aceptadas y finalizadas por ventanas de tiempo identificándolas con su nombre
+ * Datos que envía:
+ * * Nombre de mision y cantidad (positiva si se han aceptado más misiones, negativa si se han finalizado más)
+******/
+
 public class VoluntariosMisiones implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
@@ -49,6 +56,7 @@ public class VoluntariosMisiones implements IRichBolt {
 
 		this.countVoluntario = Collections.synchronizedMap(new HashMap<String, Long>());
 		this.classVoluntario = new HashMap<String, Mision>();
+		
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(
@@ -69,9 +77,12 @@ public class VoluntariosMisiones implements IRichBolt {
 				this.classVoluntario.put(log.getMision(), count);
 			}
 		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
-			this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) - 1));
+			if(this.countVoluntario.containsKey(log.getMision())){
+				this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) - 1));
+			}else{
+				this.countVoluntario.put(log.getMision(), Long.valueOf(-1));
+			}
 		}
-
 	}
 
 	/**

@@ -22,6 +22,17 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
+
+/*****
+ * Bolt que muestra datos sobre tiempo en que los voluntarios se demoran en aceptar una misión luego de haber sido creada
+ * Datos que envía:
+ * * Tiempo promedio en aceptar misión
+ * * Tiempo máximo en aceptación de misiones
+ * * Tiempo mínimo en aceptación de misiones
+ * * Desviación estándar de los tiempos de aceptación
+******/
+
+
 public class ResponderMision implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;

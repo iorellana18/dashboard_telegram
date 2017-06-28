@@ -25,6 +25,15 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
+/*****
+ * Bolt que cuenta la cantidad de misiones en espera (entre CREATE_MISSION e INIT_MISSION)
+ * Datos que envía:
+ * * Cantidad de misiones en espera
+ * * Cantidad de misiones en espera por ventana de tiempo
+ * * Cantidad de misiones creadas
+******/
+
+
 public class MisionesEspera implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;

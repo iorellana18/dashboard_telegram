@@ -24,6 +24,13 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
+/*****
+ * Bolt que cuenta la cantidad de voluntarios activos (entre ACCEPT_MISSION y FINISH_MISION)
+ * Datos que envía:
+ * * Cantidad de coluntiarios activos 
+ * * Cantidad de voluntarios que acepto una misión por unidad de tiempo
+******/
+
 public class VoluntariosActivos implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
@@ -71,7 +78,6 @@ public class VoluntariosActivos implements IRichBolt {
 			rateVoluntario--;
 			timestampCurrent = log.getTimestamp();
 		}
-
 	}
 
 	/**

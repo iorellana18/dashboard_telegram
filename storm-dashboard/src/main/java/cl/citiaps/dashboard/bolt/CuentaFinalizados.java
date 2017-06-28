@@ -18,6 +18,15 @@ import org.slf4j.LoggerFactory;
 
 import cl.citiaps.dashboard.eda.Log;
 
+/*****
+ * Bolt que muestra datos sobre misiones finalizadas ("FINISH_MISSION")
+ * Datos que envía:
+ * * Cantidad de misiones finalizadas
+ * * Tiempo promedio de finalización de las misiones (desde que inician INIT_MISSION)
+ * * Tiempo máximo de finalización
+ * * Tiempo mńimo de finalización
+******/
+
 public class CuentaFinalizados implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
