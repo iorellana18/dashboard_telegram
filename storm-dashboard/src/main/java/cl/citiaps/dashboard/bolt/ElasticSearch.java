@@ -41,7 +41,7 @@ public class ElasticSearch implements IRichBolt {
 	private String IP;
 	private int port;
 	private String clusterName;
-	
+
 	private String index;
 
 	public ElasticSearch(String IP, int port, String clusterName, String index) {
@@ -78,7 +78,7 @@ public class ElasticSearch implements IRichBolt {
 			logger.info("{}", map);
 
 			IndexResponse response = transportClient.prepareIndex(index, "count").setSource(map).get();
-			logger.info("{}", response);
+			// logger.info("{}", response);
 		} else if (tuple.contains("mision")) {
 			Mision mision = (Mision) tuple.getValueByField("mision");
 
@@ -89,7 +89,7 @@ public class ElasticSearch implements IRichBolt {
 			IndexResponse response = transportClient.prepareIndex(index, "mision").setSource(map).get();
 			// UpdateResponse response = transportClient.prepareUpdate("onemi",
 			// "mision").setDoc(map).get();
-			logger.info("{}", response);
+			// logger.info("{}", response);
 		}
 	}
 

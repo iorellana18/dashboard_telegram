@@ -7,7 +7,7 @@ import java.util.TimeZone;
 
 public class ParseDate {
 	public static String parse(Long timestamp) {
-		Date timeStamp = new Date(timestamp * 1000);
+		Date timeStamp = new Date(timestamp);
 		TimeZone timeZone = TimeZone.getTimeZone("UTC");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 		dateFormat.setTimeZone(timeZone);

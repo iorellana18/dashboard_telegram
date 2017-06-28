@@ -129,6 +129,9 @@ public class VoluntariosMisiones implements IRichBolt {
 			Map<String, Long> snapshotCountNum;
 			synchronized (this.countNum) {
 				snapshotCountNum = new HashMap<String, Long>(this.countNum);
+				/**
+				 * Arreglar
+				 */
 				this.countNum.clear();
 			}
 

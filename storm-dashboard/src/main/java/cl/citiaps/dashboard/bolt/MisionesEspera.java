@@ -142,8 +142,6 @@ public class MisionesEspera implements IRichBolt {
 			this.outputCollector.emit(acum.factoryCount());
 			this.outputCollector.emit(rate.factoryCount());
 			this.outputCollector.emit(sum.factoryCount());
-
-			logger.info("{}", timestampCurrent);
 		}
 
 	}
