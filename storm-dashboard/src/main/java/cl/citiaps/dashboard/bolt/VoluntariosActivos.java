@@ -53,8 +53,8 @@ public class VoluntariosActivos implements IRichBolt {
 	private long timeDelay;
 	private long emitTimeframe;
 
-	private Long count;
 	private AtomicLong rateVoluntario;
+	private AtomicLong voluntarioAcepta;
 	private Long timestampCurrent;
 
 	public VoluntariosActivos(long timeDelay, long emitTimeframe) {
@@ -67,9 +67,10 @@ public class VoluntariosActivos implements IRichBolt {
 		this.mapConf = mapConf;
 		this.outputCollector = outputCollector;
 
-		this.count = Long.valueOf(0);
+		Long.valueOf(0);
 
 		this.rateVoluntario = new AtomicLong(0);
+		this.voluntarioAcepta = new AtomicLong(0);
 		this.timestampCurrent = new Date().getTime();
 
 		this.emitTask = new Timer();
@@ -82,6 +83,7 @@ public class VoluntariosActivos implements IRichBolt {
 
 		if (log.getAccion().equals("ACCEPT_MISSION")) {
 			rateVoluntario.getAndIncrement();
+			voluntarioAcepta.getAndIncrement();
 			timestampCurrent = log.getTimestamp();
 		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
 			rateVoluntario.getAndDecrement();
@@ -126,6 +128,8 @@ public class VoluntariosActivos implements IRichBolt {
 		private final OutputCollector outputCollector;
 		private long previousSnapshot;
 		private long rate;
+		private long acceptRate;
+		private long previousAccept;
 
 		public EmitTask(OutputCollector outputCollector) {
 			this.outputCollector = outputCollector;
@@ -144,7 +148,12 @@ public class VoluntariosActivos implements IRichBolt {
 			this.rate = snapshot - this.previousSnapshot;
 			this.previousSnapshot = snapshot;
 
+			long aceptaSnapshot = voluntarioAcepta.get();
+			this.acceptRate = aceptaSnapshot - this.previousAccept;
+			this.previousAccept = aceptaSnapshot;
+
 			long count = snapshot;
+			long aceptadosTotales = aceptaSnapshot;
 			if (this.rate < 0) {
 				this.rate = Long.valueOf(0);
 			}
@@ -153,6 +162,11 @@ public class VoluntariosActivos implements IRichBolt {
 			Count rate = new Count("voluntariosActivosRate", ParseDate.parse(timestampCurrent), this.rate);
 			this.outputCollector.emit(acum.factoryCount());
 			this.outputCollector.emit(rate.factoryCount());
+			
+			Count totalAceptados = new Count ("totalAceptados",ParseDate.parse(timestampCurrent),aceptadosTotales);
+			Count aceptadosxVentana = new Count ("aceptadosRate",ParseDate.parse(timestampCurrent),acceptRate);
+			this.outputCollector.emit(totalAceptados.factoryCount());
+			this.outputCollector.emit(aceptadosxVentana.factoryCount());
 		}
 
 	}
