@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -27,9 +28,17 @@ import cl.citiaps.dashboard.utils.ParseDate;
 /*****
  * Bolt que cuenta la cantidad de voluntarios activos (entre ACCEPT_MISSION y FINISH_MISION)
  * Datos que envía:
- * * Cantidad de coluntiarios activos 
+ * * Cantidad de voluntarios activos 
  * * Cantidad de voluntarios que acepto una misión por unidad de tiempo
 ******/
+
+/**
+ * 
+ * ARREGLAR SYNC THREAD !!!!
+ * 
+ * @author daniel
+ *
+ */
 
 public class VoluntariosActivos implements IRichBolt {
 
@@ -45,7 +54,7 @@ public class VoluntariosActivos implements IRichBolt {
 	private long emitTimeframe;
 
 	private Long count;
-	private Long rateVoluntario;
+	private AtomicLong rateVoluntario;
 	private Long timestampCurrent;
 
 	public VoluntariosActivos(long timeDelay, long emitTimeframe) {
@@ -60,7 +69,7 @@ public class VoluntariosActivos implements IRichBolt {
 
 		this.count = Long.valueOf(0);
 
-		this.rateVoluntario = Long.valueOf(0);
+		this.rateVoluntario = new AtomicLong(0);
 		this.timestampCurrent = new Date().getTime();
 
 		this.emitTask = new Timer();
@@ -72,10 +81,10 @@ public class VoluntariosActivos implements IRichBolt {
 		Log log = (Log) tuple.getValueByField("log");
 
 		if (log.getAccion().equals("ACCEPT_MISSION")) {
-			rateVoluntario++;
+			rateVoluntario.getAndIncrement();
 			timestampCurrent = log.getTimestamp();
 		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
-			rateVoluntario--;
+			rateVoluntario.getAndDecrement();
 			timestampCurrent = log.getTimestamp();
 		}
 	}
@@ -115,9 +124,13 @@ public class VoluntariosActivos implements IRichBolt {
 	 */
 	private class EmitTask extends TimerTask {
 		private final OutputCollector outputCollector;
+		private long previousSnapshot;
+		private long rate;
 
 		public EmitTask(OutputCollector outputCollector) {
 			this.outputCollector = outputCollector;
+			this.previousSnapshot = 0;
+			this.rate = 0;
 		}
 
 		/**
@@ -127,15 +140,19 @@ public class VoluntariosActivos implements IRichBolt {
 		@Override
 		public void run() {
 
-			count += rateVoluntario;
+			long snapshot = rateVoluntario.get();
+			this.rate = snapshot - this.previousSnapshot;
+			this.previousSnapshot = snapshot;
 
-			Count acum = new Count("voluntariosCount", ParseDate.parse(timestampCurrent), count);
-			Count rate = new Count("voluntariosRate", ParseDate.parse(timestampCurrent), rateVoluntario);
+			long count = snapshot;
+			if (this.rate < 0) {
+				this.rate = Long.valueOf(0);
+			}
+
+			Count acum = new Count("voluntariosActivosAcum", ParseDate.parse(timestampCurrent), count);
+			Count rate = new Count("voluntariosActivosRate", ParseDate.parse(timestampCurrent), this.rate);
 			this.outputCollector.emit(acum.factoryCount());
 			this.outputCollector.emit(rate.factoryCount());
-
-			rateVoluntario = Long.valueOf(0);
-
 		}
 
 	}

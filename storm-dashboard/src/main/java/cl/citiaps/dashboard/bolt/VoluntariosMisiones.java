@@ -28,6 +28,12 @@ import cl.citiaps.dashboard.eda.Mision;
  * * Nombre de mision y cantidad (positiva si se han aceptado más misiones, negativa si se han finalizado más)
 ******/
 
+/**
+ * OPCION DOS: ENVIAR TOTAL DE VOLUNTARIOS DESDE ACA !!!!
+ * @author daniel
+ *
+ */
+
 public class VoluntariosMisiones implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;

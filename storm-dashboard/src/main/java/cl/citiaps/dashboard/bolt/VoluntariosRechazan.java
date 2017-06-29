@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -25,11 +26,10 @@ import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
 /*****
- * Bolt que cuenta la cantidad de voluntarios que rechazan misiones ("REJECT_MISSION")
- * Datos que envía:
- * * Cantidad de voluntarios que rechazan mision
- * * Cantidad de voluntarios que rechazan mision por ventana de tiempo
-******/
+ * Bolt que cuenta la cantidad de voluntarios que rechazan misiones
+ * ("REJECT_MISSION") Datos que envía: * Cantidad de voluntarios que rechazan
+ * mision * Cantidad de voluntarios que rechazan mision por ventana de tiempo
+ ******/
 
 public class VoluntariosRechazan implements IRichBolt {
 
@@ -45,7 +45,7 @@ public class VoluntariosRechazan implements IRichBolt {
 	private long emitTimeframe;
 
 	private Long count;
-	private Long rateVoluntario;
+	private AtomicLong rateVoluntario;
 	private Long timestampCurrent;
 
 	public VoluntariosRechazan(long timeDelay, long emitTimeframe) {
@@ -59,7 +59,7 @@ public class VoluntariosRechazan implements IRichBolt {
 		this.outputCollector = outputCollector;
 		this.count = Long.valueOf(0);
 
-		this.rateVoluntario = Long.valueOf(0);
+		this.rateVoluntario = new AtomicLong(0);
 		this.timestampCurrent = new Date().getTime();
 
 		this.emitTask = new Timer();
@@ -70,7 +70,7 @@ public class VoluntariosRechazan implements IRichBolt {
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
 		if (log.getAccion().equals("REJECT_MISSION")) {
-			rateVoluntario++;
+			this.rateVoluntario.getAndIncrement();
 			timestampCurrent = log.getTimestamp();
 		}
 

@@ -34,7 +34,7 @@ public class Log {
 		setAccion(parser[3]);
 		setMision(parser[4]);
 		setLocation(parser[6] + "," + parser[8]);
-		if (parser.length == 11) { // Ya que quien crea emergencia no tiene
+		if (parser.length >= 11) { // Ya que quien crea emergencia no tiene
 									// estos datos
 			String[] parseEmergencia = parser[10].split("\\(");
 			setEmergencia(parseEmergencia[0]);
