@@ -21,7 +21,6 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.eda.Mision;
 
-
 /*****
  * Bolt que envía cantidad de misiones aceptadas y finalizadas por ventanas de tiempo identificándolas con su nombre
  * Datos que envía:
@@ -30,6 +29,7 @@ import cl.citiaps.dashboard.eda.Mision;
 
 /**
  * OPCION DOS: ENVIAR TOTAL DE VOLUNTARIOS DESDE ACA !!!!
+ * 
  * @author daniel
  *
  */
@@ -62,7 +62,6 @@ public class VoluntariosMisiones implements IRichBolt {
 
 		this.countVoluntario = Collections.synchronizedMap(new HashMap<String, Long>());
 		this.classVoluntario = new HashMap<String, Mision>();
-		
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(
@@ -78,14 +77,14 @@ public class VoluntariosMisiones implements IRichBolt {
 				this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) + 1));
 			} else {
 				this.countVoluntario.put(log.getMision(), Long.valueOf(1));
-				Mision count = new Mision("voluntariosMisiones", log.getDate(), Long.valueOf(0), log.getMision(),
-						log.getLocation(), log.getEmergencia());
+				Mision count = new Mision("voluntariosMisiones", log.getDate(), Long.valueOf(0), Long.valueOf(0),
+						log.getMision(), log.getLocation(), log.getEmergencia());
 				this.classVoluntario.put(log.getMision(), count);
 			}
 		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
-			if(this.countVoluntario.containsKey(log.getMision())){
+			if (this.countVoluntario.containsKey(log.getMision())) {
 				this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) - 1));
-			}else{
+			} else {
 				this.countVoluntario.put(log.getMision(), Long.valueOf(-1));
 			}
 		}

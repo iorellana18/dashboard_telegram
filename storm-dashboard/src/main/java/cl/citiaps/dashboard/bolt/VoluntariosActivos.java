@@ -145,9 +145,6 @@ public class VoluntariosActivos implements IRichBolt {
 			this.previousSnapshot = snapshot;
 
 			long count = snapshot;
-			if (this.rate < 0) {
-				this.rate = Long.valueOf(0);
-			}
 
 			Count acum = new Count("voluntariosActivosAcum", ParseDate.parse(timestampCurrent), count);
 			Count rate = new Count("voluntariosActivosRate", ParseDate.parse(timestampCurrent), this.rate);
