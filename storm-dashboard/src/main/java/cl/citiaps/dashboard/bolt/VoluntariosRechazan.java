@@ -111,9 +111,13 @@ public class VoluntariosRechazan implements IRichBolt {
 	 */
 	private class EmitTask extends TimerTask {
 		private final OutputCollector outputCollector;
+		private long previousSnapshot;
+		private long rate;
 
 		public EmitTask(OutputCollector outputCollector) {
 			this.outputCollector = outputCollector;
+			this.previousSnapshot = 0;
+			this.rate = 0;
 		}
 
 		/**
@@ -122,17 +126,17 @@ public class VoluntariosRechazan implements IRichBolt {
 		 */
 		@Override
 		public void run() {
+			long snapshot = rateVoluntario.get();
+			this.rate = snapshot - this.previousSnapshot;
+			this.previousSnapshot = snapshot;
 
-			count += rateVoluntario;
+			long count = snapshot;
 
 			Count acum = new Count("voluntariosRechazanCount", ParseDate.parse(timestampCurrent), count);
-			Count rate = new Count("voluntariosRechazanRate", ParseDate.parse(timestampCurrent), rateVoluntario);
+			Count rate = new Count("voluntariosRechazanRate", ParseDate.parse(timestampCurrent), this.rate);
 
 			this.outputCollector.emit(acum.factoryCount());
 			this.outputCollector.emit(rate.factoryCount());
-
-			rateVoluntario = Long.valueOf(0);
-
 		}
 
 	}

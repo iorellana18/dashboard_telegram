@@ -10,6 +10,7 @@ public class Mision {
 	private String tipo;
 	private String date;
 	private Long count;
+	private Long cantVoluntarios;
 	private String mision;
 	private String location;
 	private String emergencia;
@@ -18,15 +19,18 @@ public class Mision {
 		this.tipo = null;
 		this.date = null;
 		this.setCount(Long.valueOf(0));
+		this.setCantVoluntarios(Long.valueOf(0));
 		this.mision = null;
 		this.location = null;
 		this.emergencia = null;
 	}
 
-	public Mision(String tipo, String date, Long count, String mision, String location, String emergencia) {
+	public Mision(String tipo, String date, Long count, Long cantVoluntarios, String mision, String location,
+			String emergencia) {
 		this.setTipo(tipo);
 		this.date = date;
 		this.setCount(count);
+		this.setCantVoluntarios(cantVoluntarios);
 		this.mision = mision;
 		this.location = location;
 		this.emergencia = emergencia;
@@ -59,6 +63,14 @@ public class Mision {
 
 	public void setCount(Long count) {
 		this.count = count;
+	}
+
+	public Long getCantVoluntarios() {
+		return cantVoluntarios;
+	}
+
+	public void setCantVoluntarios(Long cantVoluntarios) {
+		this.cantVoluntarios = cantVoluntarios;
 	}
 
 	public String getMision() {
