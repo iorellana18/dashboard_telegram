@@ -52,7 +52,7 @@ public class Topology {
 		builder.setBolt("VoluntariosRechazan", new VoluntariosRechazan(5, 5)).shuffleGrouping("ParseLog");
 		builder.setBolt("VoluntariosMisiones", new VoluntariosMisiones(5, 5)).shuffleGrouping("ParseLog");
 
-		builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158", 9300, "cluster", args[2]))
+		builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158", 9300, "cluster", "dashboard", args[2]))
 				// .shuffleGrouping("ResponderMision").shuffleGrouping("InicializarMision")
 				.shuffleGrouping("MisionesEstado").shuffleGrouping("MisionesEspera")
 				.shuffleGrouping("VoluntariosActivos").shuffleGrouping("VoluntariosMisiones")

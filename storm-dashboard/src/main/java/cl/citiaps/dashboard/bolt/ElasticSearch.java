@@ -43,12 +43,14 @@ public class ElasticSearch implements IRichBolt {
 	private String clusterName;
 
 	private String index;
+	private String type;
 
-	public ElasticSearch(String IP, int port, String clusterName, String index) {
+	public ElasticSearch(String IP, int port, String clusterName, String index, String type) {
 		this.IP = IP;
 		this.port = port;
 		this.clusterName = clusterName;
 		this.index = index;
+		this.type = type;
 	}
 
 	@Override
@@ -68,7 +70,7 @@ public class ElasticSearch implements IRichBolt {
 			Map<String, Object> map = oMapper.convertValue(log, new TypeReference<Map<String, String>>() {
 			});
 
-			IndexResponse response = transportClient.prepareIndex(index, "mission").setSource(map).get();
+			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
 
 		} else if (tuple.contains("count")) {
 			Count count = (Count) tuple.getValueByField("count");
@@ -77,7 +79,7 @@ public class ElasticSearch implements IRichBolt {
 			});
 			logger.info("{}", map);
 
-			IndexResponse response = transportClient.prepareIndex(index, "count").setSource(map).get();
+			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
 			// logger.info("{}", response);
 		} else if (tuple.contains("mision")) {
 			Mision mision = (Mision) tuple.getValueByField("mision");
@@ -86,7 +88,7 @@ public class ElasticSearch implements IRichBolt {
 			});
 			logger.info("{}", map);
 
-			IndexResponse response = transportClient.prepareIndex(index, "mision").setSource(map).get();
+			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
 			// UpdateResponse response = transportClient.prepareUpdate("onemi",
 			// "mision").setDoc(map).get();
 			// logger.info("{}", response);

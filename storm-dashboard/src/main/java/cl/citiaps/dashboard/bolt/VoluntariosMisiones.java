@@ -46,6 +46,7 @@ public class VoluntariosMisiones implements IRichBolt {
 	private Timer emitTask;
 	private long timeDelay;
 	private long emitTimeframe;
+	private Map<String, Long> misiones;
 
 	private Map<String, Long> countVoluntario;
 	private Map<String, Mision> classVoluntario;
@@ -62,6 +63,7 @@ public class VoluntariosMisiones implements IRichBolt {
 
 		this.countVoluntario = Collections.synchronizedMap(new HashMap<String, Long>());
 		this.classVoluntario = new HashMap<String, Mision>();
+		this.misiones = new HashMap<String,Long>();
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(
@@ -77,16 +79,29 @@ public class VoluntariosMisiones implements IRichBolt {
 				this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) + 1));
 			} else {
 				this.countVoluntario.put(log.getMision(), Long.valueOf(1));
-				Mision count = new Mision("voluntariosMisiones", log.getDate(), Long.valueOf(0), Long.valueOf(0),
+				Mision count = new Mision("voluntariosMisiones", log.getDate(), Long.valueOf(0), Long.valueOf(1),
 						log.getMision(), log.getLocation(), log.getEmergencia());
 				this.classVoluntario.put(log.getMision(), count);
 			}
-		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
-			if (this.countVoluntario.containsKey(log.getMision())) {
-				this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) - 1));
-			} else {
-				this.countVoluntario.put(log.getMision(), Long.valueOf(-1));
+			//Revisar si hay mejor solución
+			/*if(this.misiones.containsKey(log.getMision())){
+				this.misiones.put(log.getMision(), this.misiones.get(log.getMision())+1);
+			}else{
+				this.misiones.put(log.getMision(), Long.valueOf(1));
 			}
+			
+				*/
+		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
+			// Restar valor real 
+			long voluntariosFinalizados = this.classVoluntario.get(log.getMision()).getCantVoluntarios();
+			if (this.countVoluntario.containsKey(log.getMision())) {
+				this.countVoluntario.put(log.getMision(), this.countVoluntario.get(log.getMision())-voluntariosFinalizados);
+				//this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) - 1));
+			} else {
+				this.countVoluntario.put(log.getMision(),-voluntariosFinalizados);
+			}
+			//
+			//this.misiones.put(log.getMision(), Long.valueOf(0));
 		}
 	}
 
@@ -155,7 +170,14 @@ public class VoluntariosMisiones implements IRichBolt {
 				mision.setCount(snapshotCountNum.get(mision.getMision()));
 				this.outputCollector.emit(new Values(mision));
 			}
-
+			
+			/// Revisar
+			/*long total = 0;
+			for(Long mision : misiones.values()){
+				total += mision;
+			}
+			this.outputCollector.emit(new Values(total));
+*/
 		}
 
 	}

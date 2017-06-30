@@ -2,6 +2,7 @@ package cl.citiaps.dashboard.bolt;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
+import cl.citiaps.dashboard.eda.Mision;
 import cl.citiaps.dashboard.utils.ParseDate;
 
 /*****
@@ -56,6 +58,7 @@ public class VoluntariosActivos implements IRichBolt {
 	private AtomicLong rateVoluntario;
 	private AtomicLong voluntarioAcepta;
 	private Long timestampCurrent;
+	private Map<String, Long> misiones;
 
 	public VoluntariosActivos(long timeDelay, long emitTimeframe) {
 		this.timeDelay = timeDelay;
@@ -72,6 +75,7 @@ public class VoluntariosActivos implements IRichBolt {
 		this.rateVoluntario = new AtomicLong(0);
 		this.voluntarioAcepta = new AtomicLong(0);
 		this.timestampCurrent = new Date().getTime();
+		this.misiones = new HashMap<String, Long>();
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(new EmitTask(this.outputCollector), timeDelay * 1000, emitTimeframe * 1000);
@@ -82,11 +86,17 @@ public class VoluntariosActivos implements IRichBolt {
 		Log log = (Log) tuple.getValueByField("log");
 
 		if (log.getAccion().equals("ACCEPT_MISSION")) {
+			if(this.misiones.containsKey(log.getMision())){
+				this.misiones.put(log.getMision(), this.misiones.get(log.getMision())+1);
+			}else{
+				this.misiones.put(log.getMision(),Long.valueOf(1));
+			}
 			rateVoluntario.getAndIncrement();
 			voluntarioAcepta.getAndIncrement();
 			timestampCurrent = log.getTimestamp();
 		} else if (log.getAccion().equals("FINISH_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
-			rateVoluntario.getAndDecrement();
+			rateVoluntario.getAndSet(rateVoluntario.get()-this.misiones.get(log.getMision()));
+			//rateVoluntario.getAndDecrement();
 			timestampCurrent = log.getTimestamp();
 		}
 	}
@@ -154,9 +164,6 @@ public class VoluntariosActivos implements IRichBolt {
 
 			long count = snapshot;
 			long aceptadosTotales = aceptaSnapshot;
-			if (this.rate < 0) {
-				this.rate = Long.valueOf(0);
-			}
 
 			Count acum = new Count("voluntariosActivosAcum", ParseDate.parse(timestampCurrent), count);
 			Count rate = new Count("voluntariosActivosRate", ParseDate.parse(timestampCurrent), this.rate);
