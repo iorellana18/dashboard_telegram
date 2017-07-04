@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 public class Mision {
 	private String tipo;
 	private String date;
-	private Long countRate;
+	private Long count;
 	private Long cantVoluntarios;
 	private String mision;
 	private String location;
@@ -19,15 +19,17 @@ public class Mision {
 		this.tipo = null;
 		this.date = null;
 		this.setCantVoluntarios(Long.valueOf(0));
+		this.setCount(Long.valueOf(0));
 		this.mision = null;
 		this.location = null;
 		this.emergencia = null;
 	}
 
-	public Mision(String tipo, String date, Long cantVoluntarios, String mision, String location, String emergencia) {
+	public Mision(String tipo, String date,Long cantVoluntarios, Long count, String mision, String location, String emergencia) {
 		this.setTipo(tipo);
 		this.date = date;
 		this.setCantVoluntarios(cantVoluntarios);
+		this.setCount(count);
 		this.mision = mision;
 		this.location = location;
 		this.emergencia = emergencia;
@@ -90,6 +92,14 @@ public class Mision {
 	public String toString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
+	}
+
+	public Long getCount() {
+		return count;
+	}
+
+	public void setCount(Long count) {
+		this.count = count;
 	}
 
 }

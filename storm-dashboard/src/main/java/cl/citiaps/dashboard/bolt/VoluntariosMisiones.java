@@ -67,12 +67,18 @@ public class VoluntariosMisiones implements IRichBolt {
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
 		if (log.getAccion().equals("ACCEPT_MISSION") && log.getTipoUsuario().equals("VOLUNTEER")) {
+			logger.debug("{}", log);
 			if (this.countVoluntario.containsKey(log.getMision())) {
+				logger.debug("{}", log);
 				this.countVoluntario.put(log.getMision(), (this.countVoluntario.get(log.getMision()) + 1));
+				Mision mision = this.classVoluntario.get(log.getMision());
+				mision.setCantVoluntarios(mision.getCantVoluntarios() + 1);
+				this.classVoluntario.put(log.getMision(), mision);
 			} else {
+				logger.debug("{}", log);
 				this.countVoluntario.put(log.getMision(), Long.valueOf(1));
-				Mision mision = new Mision("voluntariosMisiones", log.getDate(), Long.valueOf(0), log.getMision(),
-						log.getLocation(), log.getEmergencia());
+				Mision mision = new Mision("voluntariosMisiones", log.getDate(), Long.valueOf(1), Long.valueOf(0),
+						log.getMision(), log.getLocation(), log.getEmergencia());
 				this.classVoluntario.put(log.getMision(), mision);
 			}
 			// Revisar si hay mejor solución
@@ -157,10 +163,15 @@ public class VoluntariosMisiones implements IRichBolt {
 				/**
 				 * Arreglar
 				 */
+				/*
+				 * for(String key : this.countVoluntario.keySet()){
+				 * this.countVoluntario.put(key,Long.valueOf(0)); }
+				 */
 				this.countVoluntario.clear();
 			}
 
 			for (Mision mision : classVoluntario.values()) {
+				logger.info("{}", mision);
 				mision.setCount(snapshotCountVoluntarios.get(mision.getMision()));
 				this.outputCollector.emit(new Values(mision));
 			}
