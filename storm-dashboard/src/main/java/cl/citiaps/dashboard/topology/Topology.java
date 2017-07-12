@@ -35,14 +35,16 @@ public class Topology {
 		builder.setSpout("LogsSpout", kafkaSpout, 1);
 
 		builder.setBolt("ParseLog", new ParseLog(), 1).shuffleGrouping("LogsSpout");
+
 		builder.setBolt("MisionesTotales", new MisionesTotales(5, 5), 1).shuffleGrouping("ParseLog");
-		builder.setBolt("EnviaMensaje", new EnviaMensaje(5, 5), 1).shuffleGrouping("ParseLog");
-		builder.setBolt("EnviaMision", new EnviaMision(5, 5), 1).shuffleGrouping("ParseLog");
+		builder.setBolt("EnviaMision", new EnviaMision(), 1).shuffleGrouping("ParseLog");
 
 		// builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158",
 		// 9300, "cluster", "telegram", args[2]))
 		// .shuffleGrouping("MisionesTotales")
 		// .shuffleGrouping("EnviaMision");
+
+		builder.setBolt("EnviaMensaje", new EnviaMensaje(), 1).shuffleGrouping("ParseLog");
 
 		LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology(args[0], config, builder.createTopology());

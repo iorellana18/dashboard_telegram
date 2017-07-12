@@ -50,7 +50,6 @@ public class ClienteHTTP {
 	        }
 	        in.close();
 	 
-	        //print result
 	        System.out.println(response.toString());
 		}catch(MalformedURLException mue){
 			System.out.println(mue);

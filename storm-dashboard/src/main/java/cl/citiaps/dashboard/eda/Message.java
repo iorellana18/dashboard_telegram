@@ -8,19 +8,14 @@ import org.apache.storm.tuple.Values;
 import com.google.gson.Gson;
 
 public class Message {
-	private User user;
-	private long timeStamp;
+	private String user;
 	private Date date;
 	private String text;
 
-	public Message() {
-
-	}
-
-	public Message(User user, long date, String text) {
+	public Message(String user, long date, String text) {
 		setUser(user);
 		setText(text);
-		setDate(new Date(timeStamp));
+		setDate(new Date(date));
 	}
 
 	public List<Object> factoryLog() {
@@ -33,11 +28,11 @@ public class Message {
 		return gson.toJson(this);
 	}
 
-	public User getUser() {
+	public String getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(String user) {
 		this.user = user;
 	}
 
@@ -55,13 +50,5 @@ public class Message {
 
 	public void setText(String text) {
 		this.text = text;
-	}
-
-	public long getTimeStamp() {
-		return timeStamp;
-	}
-
-	public void setTimeStamp(long timeStamp) {
-		this.timeStamp = timeStamp;
 	}
 }

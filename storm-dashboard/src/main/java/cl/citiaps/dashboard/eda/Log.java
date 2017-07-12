@@ -19,35 +19,27 @@ public class Log {
 	private String missionId;
 	private String emergency;
 	private long voluntarios;
-	
+
 	public Log(String text) {
-		String[] parser = text.split("\",\"");
+		String[] parser = text.split("\\s*\",\"\\s*");
 		setTimeStamp(Long.valueOf(parser[0]));
 		setMessageId(parser[1]);
-		setText(parser[2].substring(1,-1));
-		setFirstName(parser[3].substring(1,-1));
-		setLastName(parser[4].substring(1,-1));
-		setUserName(parser[5].substring(1,-1));
-		setUserId(parser[6].substring(1,-1));
-		setMissionId(parser[7].substring(1,-1));
-		setEmergency(parser[8].substring(1,-1));
-		setVoluntarios(Long.valueOf(parser[9].substring(1,-1)));
+		setText(parser[2].substring(1, -1));
+		setFirstName(parser[3].substring(1, -1));
+		setLastName(parser[4].substring(1, -1));
+		setUserName(parser[5].substring(1, -1));
+		setUserId(parser[6].substring(1, -1));
+		setMissionId(parser[7].substring(1, -1));
+		setEmergency(parser[8].substring(1, -1));
+		setVoluntarios(Long.valueOf(parser[9].substring(1, -1)));
 	}
-	
-	public Message getMessage(){
-		Message message = new Message();
-		User user = new User();
-		message.setTimeStamp(timeStamp);
-		message.setText(text);
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		user.setUserName(userName);
-		user.setId(userId);
-		message.setUser(user);
+
+	public Message getMessage() {
+		Message message = new Message(this.userName, this.timeStamp, this.text);
 		return message;
 	}
-	
-	public Mision getMision(){
+
+	public Mision getMision() {
 		Mision mision = new Mision();
 		mision.setTipo(text);
 		TimeZone timeZone = TimeZone.getTimeZone("UTC");
@@ -143,8 +135,5 @@ public class Log {
 	public void setVoluntarios(long voluntarios) {
 		this.voluntarios = voluntarios;
 	}
-	
-	
-	
-	
+
 }
