@@ -20,10 +20,10 @@
 	</parent>
 
 	<groupId>cl.citiaps</groupId>
-	<artifactId>dashboard</artifactId>
+	<artifactId>dashboard_telegram</artifactId>
 	<packaging>jar</packaging>
 
-	<name>dashboard</name>
+	<name>dashboard_telegram</name>
 
 	<properties>
 		<provided.scope>provided</provided.scope>

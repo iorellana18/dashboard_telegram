@@ -8,119 +8,131 @@ import java.util.TimeZone;
 
 import org.apache.storm.tuple.Values;
 
-import com.google.gson.Gson;
-
 public class Log {
-	private long timestamp;
-	private String date;
-	private String tipoUsuario;
-	private String idUsuario;
-	private String accion;
-	private String mision;
-	private String location;
-	private String emergencia;
-	private String idMision;
-
+	private long timeStamp;
+	private String messageId;
+	private String text;
+	private String firstName;
+	private String lastName;
+	private String userName;
+	private String userId;
+	private String missionId;
+	private String emergency;
+	private long voluntarios;
+	
 	public Log(String text) {
 		String[] parser = text.split(" ");
-		Date timeStamp = new Date();
-		setTimestamp(timeStamp.getTime());
-		TimeZone timeZone = TimeZone.getTimeZone("UTC");
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-		dateFormat.setTimeZone(timeZone);
-		setDate(dateFormat.format(timeStamp));
-		setTipoUsuario(parser[1]);
-		setIdUsuario(parser[2]);
-		setAccion(parser[3]);
-		setMision(parser[4]);
-		setLocation(parser[6] + "," + parser[8]);
-		if (parser.length >= 11) { // Ya que quien crea emergencia no tiene
-									// estos datos
-			String[] parseEmergencia = parser[10].split("\\(");
-			setEmergencia(parseEmergencia[0]);
-		}
+		setTimeStamp(Long.valueOf(parser[0].substring(1,-1)));
+		setMessageId(parser[1].substring(1,-1));
+		setText(parser[2].substring(1,-1));
+		setFirstName(parser[3].substring(1,-1));
+		setLastName(parser[4].substring(1,-1));
+		setUserName(parser[5].substring(1,-1));
+		setUserId(parser[6].substring(1,-1));
+		setMissionId(parser[7].substring(1,-1));
+		setEmergency(parser[8].substring(1,-1));
+		setVoluntarios(Long.valueOf(parser[9].substring(1,-1)));
+	}
+	
+	public Message getMessage(){
+		Message message = new Message();
+		User user = new User();
+		message.setMessageId(messageId);
+		message.setDate(timeStamp);
+		message.setText(text);
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+		user.setUserName(userName);
+		user.setId(userId);
+		message.setUser(user);
+		return message;
 	}
 
 	public List<Object> factoryLog() {
 		return new Values(this);
 	}
 
-	public long getTimestamp() {
-		return timestamp;
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
-	public String getDate() {
-		return date;
+	public String getMessageId() {
+		return messageId;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 
-	public String getTipoUsuario() {
-		return tipoUsuario;
+	public String getText() {
+		return text;
 	}
 
-	public void setTipoUsuario(String tipoUsuario) {
-		this.tipoUsuario = tipoUsuario;
+	public void setText(String text) {
+		this.text = text;
 	}
 
-	public String getIdUsuario() {
-		return idUsuario;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setIdUsuario(String idUsuario) {
-		this.idUsuario = idUsuario;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getAccion() {
-		return accion;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setAccion(String accion) {
-		this.accion = accion;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public String getMision() {
-		return mision;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setMision(String mision) {
-		this.mision = mision;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
-	public String getLocation() {
-		return location;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public String getEmergencia() {
-		return emergencia;
+	public String getMissionId() {
+		return missionId;
 	}
 
-	public void setEmergencia(String emergencia) {
-		this.emergencia = emergencia;
+	public void setMissionId(String missionId) {
+		this.missionId = missionId;
 	}
 
-	@Override
-	public String toString() {
-		Gson gson = new Gson();
-		return gson.toJson(this);
+	public String getEmergency() {
+		return emergency;
 	}
 
-	public String getIdMision() {
-		return idMision;
+	public void setEmergency(String emergency) {
+		this.emergency = emergency;
 	}
 
-	public void setIdMision(String idMision) {
-		this.idMision = idMision;
+	public long getVoluntarios() {
+		return voluntarios;
 	}
 
+	public void setVoluntarios(long voluntarios) {
+		this.voluntarios = voluntarios;
+	}
+	
+	
+	
+	
 }

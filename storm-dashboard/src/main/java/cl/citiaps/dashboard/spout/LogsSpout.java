@@ -61,12 +61,12 @@ public class LogsSpout implements IRichSpout {
 
 		for (String raw : stack) {
 			Log log = new Log(raw);
-			if (timestamp.containsKey(log.getTimestamp())) {
-				timestamp.get(log.getTimestamp()).add(log);
+			if (timestamp.containsKey(log.getTimeStamp())) {
+				timestamp.get(log.getTimeStamp()).add(log);
 			} else {
 				List<Log> logs = new ArrayList<Log>();
 				logs.add(log);
-				timestamp.put(log.getTimestamp(), logs);
+				timestamp.put(log.getTimeStamp(), logs);
 			}
 		}
 
@@ -77,7 +77,7 @@ public class LogsSpout implements IRichSpout {
 	public void open(Map arg0, TopologyContext arg1, SpoutOutputCollector collector) {
 		Palabras palabras = new Palabras();
 		logger.info("Init");
-		stack = palabras.leerDiccionario("logs/ayni.log");
+		stack = palabras.leerDiccionario("logs/ayncfbhjklmi.log");
 		timestamp = parseMap(stack);
 		logger.info("Finish");
 		this.collector = collector;

@@ -13,15 +13,8 @@ import org.apache.storm.kafka.ZkHosts;
 import org.apache.storm.spout.SchemeAsMultiScheme;
 import org.apache.storm.topology.TopologyBuilder;
 
-import cl.citiaps.dashboard.bolt.ElasticSearch;
-import cl.citiaps.dashboard.bolt.InicializarMision;
-import cl.citiaps.dashboard.bolt.MisionesEspera;
-import cl.citiaps.dashboard.bolt.MisionesEstado;
 import cl.citiaps.dashboard.bolt.ParseLog;
-import cl.citiaps.dashboard.bolt.ResponderMision;
-import cl.citiaps.dashboard.bolt.VoluntariosActivos;
-import cl.citiaps.dashboard.bolt.VoluntariosMisiones;
-import cl.citiaps.dashboard.bolt.VoluntariosRechazan;
+
 
 public class Topology {
 	public static void main(String[] args) {
@@ -39,24 +32,8 @@ public class Topology {
 		TopologyBuilder builder = new TopologyBuilder();
 
 		builder.setSpout("LogsSpout", kafkaSpout, 1);
-
+		
 		builder.setBolt("ParseLog", new ParseLog(), 1).shuffleGrouping("LogsSpout");
-
-		// builder.setBolt("ResponderMision", new ResponderMision(5,
-		// 5)).shuffleGrouping("ParseLog");
-		// builder.setBolt("InicializarMision", new InicializarMision(5,
-		// 5)).shuffleGrouping("ParseLog");
-		builder.setBolt("MisionesEstado", new MisionesEstado(5, 5)).shuffleGrouping("ParseLog");
-		builder.setBolt("MisionesEspera", new MisionesEspera(5, 5)).shuffleGrouping("ParseLog");
-		builder.setBolt("VoluntariosActivos", new VoluntariosActivos(5, 5)).shuffleGrouping("ParseLog");
-		builder.setBolt("VoluntariosRechazan", new VoluntariosRechazan(5, 5)).shuffleGrouping("ParseLog");
-		builder.setBolt("VoluntariosMisiones", new VoluntariosMisiones(5, 5)).shuffleGrouping("ParseLog");
-
-		builder.setBolt("ElasticSearch", new ElasticSearch("158.170.140.158", 9300, "cluster", "dashboard", args[2]))
-				// .shuffleGrouping("ResponderMision").shuffleGrouping("InicializarMision")
-				.shuffleGrouping("MisionesEstado").shuffleGrouping("MisionesEspera")
-				.shuffleGrouping("VoluntariosActivos").shuffleGrouping("VoluntariosMisiones")
-				.shuffleGrouping("VoluntariosRechazan");
 
 		LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology(args[0], config, builder.createTopology());
