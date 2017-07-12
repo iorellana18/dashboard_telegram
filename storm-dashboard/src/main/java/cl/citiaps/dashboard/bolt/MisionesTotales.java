@@ -57,11 +57,11 @@ public class MisionesTotales implements IRichBolt{
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-		if(log.getText().equals("\\enviar_mision")){
+		if(log.getText().equals("\\sys_enviar_mision")){
 			this.misionesCreadas.getAndIncrement();
-		}else if(log.getText().equals("\\iniciar_mision")){
+		}else if(log.getText().equals("\\sys_iniciar_mision")){
 			this.misionesIniciadas.getAndIncrement();
-		}else if(log.getText().equals("\terminar_mision")){
+		}else if(log.getText().equals("\\sys_terminar_mision")){
 			this.misionesFinalizadas.getAndIncrement();
 		}
 	}
@@ -130,12 +130,12 @@ public class MisionesTotales implements IRichBolt{
 			this.previousFinalizadas = FinalizadasSnapshot;
 			
 			
-			Count acum = new Count("misionesCreadasRate", ParseDate.parse(timestampCurrent), this.CreadasRate);
-			Count rate = new Count("misionesIniciadasRate", ParseDate.parse(timestampCurrent), this.IniciadasRate);
-			Count sum = new Count("misionesFinalizadasCount", ParseDate.parse(timestampCurrent), this.FinalizadasRate);
-			this.outputCollector.emit(acum.factoryCount());
-			this.outputCollector.emit(rate.factoryCount());
-			this.outputCollector.emit(sum.factoryCount());
+			Count creadas = new Count("misionesCreadasRate", ParseDate.parse(timestampCurrent), this.CreadasRate);
+			Count iniciadas = new Count("misionesIniciadasRate", ParseDate.parse(timestampCurrent), this.IniciadasRate);
+			Count finalizadas = new Count("misionesFinalizadasCount", ParseDate.parse(timestampCurrent), this.FinalizadasRate);
+			this.outputCollector.emit(creadas.factoryCount());
+			this.outputCollector.emit(iniciadas.factoryCount());
+			this.outputCollector.emit(finalizadas.factoryCount());
 		}
 
 	}

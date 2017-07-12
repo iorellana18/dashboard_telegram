@@ -47,6 +47,19 @@ public class Log {
 		message.setUser(user);
 		return message;
 	}
+	
+	public Mision getMision(){
+		Mision mision = new Mision();
+		mision.setTipo(text);
+		TimeZone timeZone = TimeZone.getTimeZone("UTC");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+		dateFormat.setTimeZone(timeZone);
+		mision.setDate(dateFormat.format(timeStamp));
+		mision.setCantVoluntarios(voluntarios);
+		mision.setLocation(null);
+		mision.setEmergencia(emergency);
+		return mision;
+	}
 
 	public List<Object> factoryLog() {
 		return new Values(this);
