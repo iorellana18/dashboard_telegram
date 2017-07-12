@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.eda.Message;
+import cl.citiaps.dashboard.utils.ClienteHTTP;
 
 public class EnviaMensaje implements IRichBolt{
 
@@ -42,7 +43,8 @@ public class EnviaMensaje implements IRichBolt{
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-		this.outputCollector.emit(new Values(log.getMessage()));
+		ClienteHTTP cliente = new ClienteHTTP();
+		cliente.sendPost(log.getMessage());
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class EnviaMensaje implements IRichBolt{
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		outputFieldsDeclarer.declare(new Fields("message"));
+		//outputFieldsDeclarer.declare(new Fields("message"));
 		
 	}
 

@@ -1,59 +1,67 @@
 package cl.citiaps.dashboard.eda;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.storm.tuple.Values;
 
+import com.google.gson.Gson;
+
 public class Message {
-	private String messageId;
 	private User user;
-	private long date;
+	private long timeStamp;
+	private Date date;
 	private String text;
-	
-	public Message(){
-		
+
+	public Message() {
+
 	}
-	
-	public Message(String messageId, User user, long date, String text){
-		setMessageId(messageId);
+
+	public Message(User user, long date, String text) {
 		setUser(user);
-		setDate(date);
 		setText(text);
+		setDate(new Date(timeStamp));
 	}
-	
-	
+
 	public List<Object> factoryLog() {
 		return new Values(this);
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
+	}
 
 	public User getUser() {
 		return user;
 	}
+
 	public void setUser(User user) {
 		this.user = user;
 	}
-	public long getDate() {
+
+	public Date getDate() {
 		return date;
 	}
-	public void setDate(long date) {
+
+	public void setDate(Date date) {
 		this.date = date;
 	}
+
 	public String getText() {
 		return text;
 	}
+
 	public void setText(String text) {
 		this.text = text;
 	}
 
-
-	public String getMessageId() {
-		return messageId;
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 
-
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 }

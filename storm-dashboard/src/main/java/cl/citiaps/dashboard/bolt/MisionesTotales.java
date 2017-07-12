@@ -50,9 +50,6 @@ public class MisionesTotales implements IRichBolt{
 		System.gc();
 	}
 
-	// \enviar_mision
-	// \iniciar_mision
-	// \terminar_mision
 	
 	@Override
 	public void execute(Tuple tuple) {
@@ -71,7 +68,6 @@ public class MisionesTotales implements IRichBolt{
 		logger.info("Prepare ParseLog");
 		this.mapConf = mapConf;
 		this.outputCollector = outputCollector;
-		
 		this.misionesCreadas = new AtomicLong(0);
 		this.timestampCurrent = new Date().getTime();
 		this.misionesFinalizadas = new AtomicLong(0);
@@ -129,13 +125,17 @@ public class MisionesTotales implements IRichBolt{
 			this.previousIniciadas = IniciadasSnapshot;
 			this.previousFinalizadas = FinalizadasSnapshot;
 			
-			
+			System.out.println("Misiones creadas: "+this.CreadasRate);
+			System.out.println("Misiones iniciadas: "+this.IniciadasRate);
+			System.out.println("Misiones finalizadas: "+this.FinalizadasRate);
+			/*
 			Count creadas = new Count("misionesCreadasRate", ParseDate.parse(timestampCurrent), this.CreadasRate);
 			Count iniciadas = new Count("misionesIniciadasRate", ParseDate.parse(timestampCurrent), this.IniciadasRate);
 			Count finalizadas = new Count("misionesFinalizadasCount", ParseDate.parse(timestampCurrent), this.FinalizadasRate);
 			this.outputCollector.emit(creadas.factoryCount());
 			this.outputCollector.emit(iniciadas.factoryCount());
 			this.outputCollector.emit(finalizadas.factoryCount());
+			*/
 		}
 
 	}

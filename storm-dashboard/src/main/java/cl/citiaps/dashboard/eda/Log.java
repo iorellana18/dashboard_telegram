@@ -21,9 +21,9 @@ public class Log {
 	private long voluntarios;
 	
 	public Log(String text) {
-		String[] parser = text.split(" ");
-		setTimeStamp(Long.valueOf(parser[0].substring(1,-1)));
-		setMessageId(parser[1].substring(1,-1));
+		String[] parser = text.split("\",\"");
+		setTimeStamp(Long.valueOf(parser[0]));
+		setMessageId(parser[1]);
 		setText(parser[2].substring(1,-1));
 		setFirstName(parser[3].substring(1,-1));
 		setLastName(parser[4].substring(1,-1));
@@ -37,8 +37,7 @@ public class Log {
 	public Message getMessage(){
 		Message message = new Message();
 		User user = new User();
-		message.setMessageId(messageId);
-		message.setDate(timeStamp);
+		message.setTimeStamp(timeStamp);
 		message.setText(text);
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
