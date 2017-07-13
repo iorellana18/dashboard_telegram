@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
+import cl.citiaps.dashboard.eda.Message;
 import cl.citiaps.dashboard.eda.Mision;
 
 public class ElasticSearch implements IRichBolt {
@@ -91,6 +92,13 @@ public class ElasticSearch implements IRichBolt {
 			// UpdateResponse response = transportClient.prepareUpdate("onemi",
 			// "mision").setDoc(map).get();
 			// logger.info("{}", response);
+		}else if (tuple.contains("message")){
+			Message message = (Message)tuple.getValueByField("message");
+			Map<String, Object> map = oMapper.convertValue(message, new TypeReference<Map<String, Object>>() {
+			});
+			logger.info("{}", map);
+
+			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
 		}
 	}
 

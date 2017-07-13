@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 public class Count {
 	private String tipo;
 	private String date;
-	private Long count;
+	private double count;
 
 	public Count() {
 		this.tipo = null;
@@ -18,7 +18,7 @@ public class Count {
 
 	}
 
-	public Count(String tipo, String date, Long count) {
+	public Count(String tipo, String date, double count) {
 		this.setTipo(tipo);
 		this.date = date;
 		this.setCount(count);
@@ -44,11 +44,11 @@ public class Count {
 		this.date = date;
 	}
 
-	public Long getCount() {
+	public double getCount() {
 		return count;
 	}
 
-	public void setCount(Long count) {
+	public void setCount(double count) {
 		this.count = count;
 	}
 

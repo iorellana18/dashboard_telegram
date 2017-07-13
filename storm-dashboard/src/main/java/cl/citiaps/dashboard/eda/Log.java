@@ -17,6 +17,7 @@ public class Log {
 	private String userName;
 	private String userId;
 	private String missionId;
+	private String encargado;
 	private String emergency;
 	private long voluntarios;
 
@@ -30,8 +31,9 @@ public class Log {
 		setUserName(parser[5]);
 		setUserId(parser[6]);
 		setMissionId(parser[7]);
-		setEmergency(parser[8]);
-		setVoluntarios(Long.valueOf(parser[9]));
+		setEncargado(parser[8]);
+		setEmergency(parser[9]);
+		setVoluntarios(Long.valueOf(parser[10]));
 	}
 
 	public Message getMessage() {
@@ -46,8 +48,8 @@ public class Log {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 		dateFormat.setTimeZone(timeZone);
 		mision.setDate(dateFormat.format(timeStamp));
-		mision.setCantVoluntarios(voluntarios);
 		mision.setLocation(null);
+		mision.setEncargado(encargado);
 		mision.setEmergencia(emergency);
 		return mision;
 	}
@@ -134,6 +136,14 @@ public class Log {
 
 	public void setVoluntarios(long voluntarios) {
 		this.voluntarios = voluntarios;
+	}
+
+	public String getEncargado() {
+		return encargado;
+	}
+
+	public void setEncargado(String encargado) {
+		this.encargado = encargado;
 	}
 
 }

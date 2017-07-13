@@ -16,6 +16,11 @@ import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.eda.Message;
 import cl.citiaps.dashboard.utils.ClienteHTTP;
 
+/*****
+ * Bolt que envía post a aplicación de chat y envía mensaje a elasticsearch
+******/
+
+
 public class EnviaMensaje implements IRichBolt {
 
 	private static final long serialVersionUID = 6101916216609388178L;
@@ -32,8 +37,10 @@ public class EnviaMensaje implements IRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
+		Message message = log.getMessage();
 		ClienteHTTP cliente = new ClienteHTTP();
-		cliente.sendPost(log.getMessage());
+		cliente.sendPost(message);
+		this.outputCollector.emit(message.factoryLog());
 	}
 
 	@Override
@@ -44,7 +51,7 @@ public class EnviaMensaje implements IRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		// outputFieldsDeclarer.declare(new Fields("message"));
+		outputFieldsDeclarer.declare(new Fields("message"));
 
 	}
 

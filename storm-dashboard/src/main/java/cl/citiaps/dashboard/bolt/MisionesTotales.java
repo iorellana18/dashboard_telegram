@@ -19,6 +19,15 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
+
+/*****
+ * Bolt que muestra datos cuantitativos del estado las misiones
+ * Datos que envía:
+ * * Cantidad de misiones creadas
+ * * Cantidad de misiones iniciadas
+ * * Cantidad de misiones finalizadas
+******/
+
 public class MisionesTotales implements IRichBolt {
 
 	private static final long serialVersionUID = 6101916216609388178L;
