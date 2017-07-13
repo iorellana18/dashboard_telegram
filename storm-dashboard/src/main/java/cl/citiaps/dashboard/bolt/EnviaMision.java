@@ -32,7 +32,7 @@ public class EnviaMision implements IRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-		if (log.getText().equals("\\sys_enviar_mision")) {
+		if (log.getText().equals("/sys_enviar_mision")) {
 			Mision mision = log.getMision();
 			logger.info(mision.toString());
 			// this.outputCollector.emit(mision.factoryCount());

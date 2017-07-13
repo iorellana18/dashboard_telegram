@@ -17,9 +17,8 @@ public class Log {
 	private String userName;
 	private String userId;
 	private String missionId;
+	private String mission;
 	private String encargado;
-	private String emergency;
-	private long voluntarios;
 
 	public Log(String text) {
 		String[] parser = text.split("\\s*\",\"\\s*");
@@ -31,9 +30,8 @@ public class Log {
 		setUserName(parser[5]);
 		setUserId(parser[6]);
 		setMissionId(parser[7]);
-		setEncargado(parser[8]);
-		setEmergency(parser[9]);
-		setVoluntarios(Long.valueOf(parser[10]));
+		setMission(parser[8]);
+		setEncargado(parser[9]);
 	}
 
 	public Message getMessage() {
@@ -44,13 +42,13 @@ public class Log {
 	public Mision getMision() {
 		Mision mision = new Mision();
 		mision.setTipo(text);
+		mision.setMision(mission);
 		TimeZone timeZone = TimeZone.getTimeZone("UTC");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 		dateFormat.setTimeZone(timeZone);
 		mision.setDate(dateFormat.format(timeStamp));
 		mision.setLocation(null);
 		mision.setEncargado(encargado);
-		mision.setEmergencia(emergency);
 		return mision;
 	}
 
@@ -122,28 +120,20 @@ public class Log {
 		this.missionId = missionId;
 	}
 
-	public String getEmergency() {
-		return emergency;
-	}
-
-	public void setEmergency(String emergency) {
-		this.emergency = emergency;
-	}
-
-	public long getVoluntarios() {
-		return voluntarios;
-	}
-
-	public void setVoluntarios(long voluntarios) {
-		this.voluntarios = voluntarios;
-	}
-
 	public String getEncargado() {
 		return encargado;
 	}
 
 	public void setEncargado(String encargado) {
 		this.encargado = encargado;
+	}
+
+	public String getMission() {
+		return mission;
+	}
+
+	public void setMission(String mission) {
+		this.mission = mission;
 	}
 
 }

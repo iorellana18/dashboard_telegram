@@ -19,7 +19,7 @@ public class ClienteHTTP {
 
 	public void sendPost(Message message) {
 		try{
-	        String url = "http://158.170.140.100:8080/message/";
+	        String url = "http://158.170.140.113:8080/message/";
 	        URL obj = new URL(url);
 	        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 	 

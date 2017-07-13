@@ -55,15 +55,15 @@ public class MisionesPorPersona implements IRichBolt{
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-		if(log.getText().equals("\\sys_enviar_mision")){
+		if(log.getText().equals("/sys_enviar_mision")){
 			if(this.countMisiones.containsKey(log.getEncargado())){
-				this.countMisiones.put(log.getEncargado(), (this.countMisiones.get(log.getMision()) + 1));
+				this.countMisiones.put(log.getEncargado(), (this.countMisiones.get(log.getEncargado()) + 1));
 			}else{
 				this.countMisiones.put(log.getEncargado(), Long.valueOf(1));
 				Mision mision = log.getMision();
 				this.classMisiones.put(log.getEncargado(),mision);
 			}
-		}else if(log.getText().equals("\\sys_terminar_mision")){
+		}else if(log.getText().equals("/sys_terminar_mision")){
 			this.countMisiones.put(log.getEncargado(), Long.valueOf(-1));
 		}
 	}
@@ -74,6 +74,7 @@ public class MisionesPorPersona implements IRichBolt{
 		this.outputCollector = outputCollector;
 
 		this.countMisiones = Collections.synchronizedMap(new HashMap<String, Long>());
+		this.classMisiones = new HashMap<String, Mision>();
 		
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(
@@ -120,12 +121,13 @@ public class MisionesPorPersona implements IRichBolt{
 				this.countMisiones.clear();
 			}
 
-			for (Mision mision : classMisiones.values()) {
-				logger.info("{}", mision);
-				mision.setCount(snapshotCountVoluntarios.get(mision.getMision()));
-				this.outputCollector.emit(new Values(mision));
+			if(!classMisiones.isEmpty()){
+				for (Mision mision : classMisiones.values()) {
+					logger.info("{}", mision);
+					mision.setCount(snapshotCountVoluntarios.get(mision.getMision()));
+					this.outputCollector.emit(new Values(mision));
+				}
 			}
-
 		}
 
 	}

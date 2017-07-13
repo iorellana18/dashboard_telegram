@@ -99,6 +99,7 @@ public class ElasticSearch implements IRichBolt {
 			logger.info("{}", map);
 
 			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
+			logger.info("{}", response);
 		}
 	}
 

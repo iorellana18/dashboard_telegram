@@ -40,7 +40,6 @@ public class MisionesTotales implements IRichBolt {
 	private long emitTimeframe;
 
 	private AtomicLong misionesCreadas;
-	private AtomicLong misionesIniciadas;
 	private AtomicLong misionesFinalizadas;
 
 	public MisionesTotales(long timeDelay, long emitTimeframe) {
@@ -58,11 +57,9 @@ public class MisionesTotales implements IRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-		if (log.getText().equals("\\sys_enviar_mision")) {
+		if (log.getText().equals("/sys_enviar_mision")) {
 			this.misionesCreadas.getAndIncrement();
-		} else if (log.getText().equals("\\sys_editar_mision")) {
-			this.misionesIniciadas.getAndIncrement();
-		} else if (log.getText().equals("\\sys_terminar_mision")) {
+		} else if (log.getText().equals("/sys_terminar_mision")) {
 			this.misionesFinalizadas.getAndIncrement();
 		}
 	}
@@ -75,7 +72,6 @@ public class MisionesTotales implements IRichBolt {
 
 		this.misionesCreadas = new AtomicLong(0);
 		this.misionesFinalizadas = new AtomicLong(0);
-		this.misionesIniciadas = new AtomicLong(0);
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(new EmitTask(this.outputCollector), timeDelay * 1000, emitTimeframe * 1000);
@@ -83,7 +79,7 @@ public class MisionesTotales implements IRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		outputFieldsDeclarer.declare(new Fields("log"));
+		//outputFieldsDeclarer.declare(new Fields("log"));
 	}
 
 	@Override
@@ -95,19 +91,15 @@ public class MisionesTotales implements IRichBolt {
 		private final OutputCollector outputCollector;
 
 		private long previousCreadas;
-		private long previousIniciadas;
 		private long previousFinalizadas;
 		private long CreadasRate;
-		private long IniciadasRate;
 		private long FinalizadasRate;
 
 		public EmitTask(OutputCollector outputCollector) {
 			this.outputCollector = outputCollector;
 			this.previousCreadas = 0;
-			this.previousIniciadas = 0;
 			this.previousFinalizadas = 0;
 			this.CreadasRate = 0;
-			this.IniciadasRate = 0;
 			this.FinalizadasRate = 0;
 		}
 
@@ -118,19 +110,15 @@ public class MisionesTotales implements IRichBolt {
 		@Override
 		public void run() {
 			long CreadasSnapshot = misionesCreadas.get();
-			long IniciadasSnapshot = misionesIniciadas.get();
 			long FinalizadasSnapshot = misionesFinalizadas.get();
 
 			this.CreadasRate = CreadasSnapshot - this.previousCreadas;
-			this.IniciadasRate = IniciadasSnapshot - this.previousIniciadas;
 			this.FinalizadasRate = FinalizadasSnapshot - this.previousFinalizadas;
 
 			this.previousCreadas = CreadasSnapshot;
-			this.previousIniciadas = IniciadasSnapshot;
 			this.previousFinalizadas = FinalizadasSnapshot;
 
 			System.out.println("Misiones creadas: " + this.CreadasRate);
-			System.out.println("Misiones iniciadas: " + this.IniciadasRate);
 			System.out.println("Misiones finalizadas: " + this.FinalizadasRate);
 			/*
 			 * Count creadas = new Count("misionesCreadasRate",
