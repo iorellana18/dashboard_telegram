@@ -7,15 +7,17 @@ import org.apache.storm.tuple.Values;
 
 import com.google.gson.Gson;
 
+import cl.citiaps.dashboard.utils.ParseDate;
+
 public class Message {
-	private String user;
-	private Date date;
-	private String text;
+	private String User;
+	private String Date;
+	private String Text;
 
 	public Message(String user, long date, String text) {
 		setUser(user);
 		setText(text);
-		setDate(new Date(date));
+		setDate(ParseDate.parse(date));
 	}
 
 	public List<Object> factoryLog() {
@@ -29,26 +31,26 @@ public class Message {
 	}
 
 	public String getUser() {
-		return user;
+		return User;
 	}
 
 	public void setUser(String user) {
-		this.user = user;
+		this.User = user;
 	}
 
-	public Date getDate() {
-		return date;
+	public String getDate() {
+		return Date;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setDate(String string) {
+		this.Date = string;
 	}
 
 	public String getText() {
-		return text;
+		return Text;
 	}
 
 	public void setText(String text) {
-		this.text = text;
+		this.Text = text;
 	}
 }

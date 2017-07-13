@@ -9,7 +9,7 @@ public class ParseDate {
 	public static String parse(Long timestamp) {
 		Date timeStamp = new Date(timestamp);
 		TimeZone timeZone = TimeZone.getTimeZone("UTC");
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		dateFormat.setTimeZone(timeZone);
 		return dateFormat.format(timeStamp);
 	}

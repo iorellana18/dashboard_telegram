@@ -22,16 +22,16 @@ public class Log {
 
 	public Log(String text) {
 		String[] parser = text.split("\\s*\",\"\\s*");
-		setTimeStamp(Long.valueOf(parser[0]));
+		setTimeStamp(Long.valueOf(parser[0].replace("\"", "")));
 		setMessageId(parser[1]);
-		setText(parser[2].substring(1, -1));
-		setFirstName(parser[3].substring(1, -1));
-		setLastName(parser[4].substring(1, -1));
-		setUserName(parser[5].substring(1, -1));
-		setUserId(parser[6].substring(1, -1));
-		setMissionId(parser[7].substring(1, -1));
-		setEmergency(parser[8].substring(1, -1));
-		setVoluntarios(Long.valueOf(parser[9].substring(1, -1)));
+		setText(parser[2]);
+		setFirstName(parser[3]);
+		setLastName(parser[4]);
+		setUserName(parser[5]);
+		setUserId(parser[6]);
+		setMissionId(parser[7]);
+		setEmergency(parser[8]);
+		setVoluntarios(Long.valueOf(parser[9]));
 	}
 
 	public Message getMessage() {
