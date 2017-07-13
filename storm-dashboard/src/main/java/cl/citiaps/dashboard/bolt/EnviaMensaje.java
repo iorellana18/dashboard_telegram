@@ -40,7 +40,10 @@ public class EnviaMensaje implements IRichBolt {
 		Message message = log.getMessage();
 		ClienteHTTP cliente = new ClienteHTTP();
 		cliente.sendPost(message);
-		this.outputCollector.emit(message.factoryLog());
+		if(comprueba(log.getText())){
+			this.outputCollector.emit(message.factoryLog());
+		}
+		
 	}
 
 	@Override
@@ -58,6 +61,17 @@ public class EnviaMensaje implements IRichBolt {
 	@Override
 	public Map<String, Object> getComponentConfiguration() {
 		return mapConf;
+	}
+	
+	public Boolean comprueba(String texto){
+		if(texto.equals("/sys_enviar_mision")||texto.equals("/enviar_mision")||texto.equals("/sys_terminar_mision")
+				||texto.equals("/terminar_mision")||texto.equals("/ayuda@RimayBot")
+				||texto.equals("/listar_misiones@RimayBot")||texto.equals("/crear_mision@RimayBot")
+				||texto.equals("/terminar_mision@RimayBot")||texto.equals("/cancelar@RimayBot")
+				||texto.equals("/admin_user@RimayBot")){
+					return false;
+				}
+		return true;
 	}
 
 }

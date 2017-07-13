@@ -136,4 +136,5 @@ public class Log {
 		this.mission = mission;
 	}
 
+
 }
