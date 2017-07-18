@@ -28,7 +28,7 @@ import cl.citiaps.dashboard.utils.ParseDate;
 public class MisionesTotales implements IRichBolt {
 
 	private static final long serialVersionUID = 6101916216609388178L;
-	private static final Logger logger = LoggerFactory.getLogger(ParseLog.class);
+	private static final Logger logger = LoggerFactory.getLogger(MisionesTotales.class);
 	private OutputCollector outputCollector;
 	private Map mapConf;
 

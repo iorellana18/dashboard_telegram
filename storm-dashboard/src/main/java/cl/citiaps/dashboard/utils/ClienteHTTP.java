@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import cl.citiaps.dashboard.eda.Message;
 
 public class ClienteHTTP {
-	private static Logger logger = LoggerFactory.getLogger(ClienteHTTP.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClienteHTTP.class);
 
 	private String ip;
 	private int port;

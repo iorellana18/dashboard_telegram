@@ -32,7 +32,7 @@ public class TiempoMisiones implements IRichBolt{
 
 	private static final long serialVersionUID = 7784329420249780555L;
 
-	private static Logger logger = LoggerFactory.getLogger(TiempoMisiones.class);
+	private static final Logger logger = LoggerFactory.getLogger(TiempoMisiones.class);
 
 	private OutputCollector outputCollector;
 	private Map mapConf;

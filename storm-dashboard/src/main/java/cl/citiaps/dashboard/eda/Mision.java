@@ -13,8 +13,7 @@ public class Mision {
 	private String mision;
 	private String emergencia;
 	private String encargado;
-	private long latitud;
-	private long longitud;
+	private String location;
 
 	public Mision() {
 		this.tipo = null;
@@ -25,7 +24,7 @@ public class Mision {
 		this.encargado = null;
 	}
 
-	public Mision(String tipo, String date, String mision, String emergencia,String encargado) {
+	public Mision(String tipo, String date, String mision, String emergencia, String encargado) {
 		this.setTipo(tipo);
 		this.date = date;
 		this.mision = mision;
@@ -92,20 +91,12 @@ public class Mision {
 		this.encargado = encargado;
 	}
 
-	public long getLatitud() {
-		return latitud;
+	public String getLocation() {
+		return location;
 	}
 
-	public void setLatitud(long latitud) {
-		this.latitud = latitud;
-	}
-
-	public long getLongitud() {
-		return longitud;
-	}
-
-	public void setLongitud(long longitud) {
-		this.longitud = longitud;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 }

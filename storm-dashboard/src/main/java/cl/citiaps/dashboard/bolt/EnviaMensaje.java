@@ -25,7 +25,8 @@ public class EnviaMensaje implements IRichBolt {
 
 	private static final long serialVersionUID = 6101916216609388178L;
 
-	private static Logger logger = LoggerFactory.getLogger(EnviaMensaje.class);
+	private static final Logger logger = LoggerFactory.getLogger(EnviaMensaje.class);
+	
 	private OutputCollector outputCollector;
 	private Map mapConf;
 
