@@ -25,9 +25,8 @@ public class Topology {
 		Configuration configuration = new Configuration("config/config.properties");
 		configuration.Setup();
 
-		String topicName = args[1];
 		BrokerHosts hosts = new ZkHosts(configuration.zk.host + ":" + configuration.zk.port);
-		SpoutConfig spoutConfig = new SpoutConfig(hosts, configuration.kafka.topic, "/" + topicName,
+		SpoutConfig spoutConfig = new SpoutConfig(hosts, configuration.kafka.topic, "/" + configuration.kafka.topic,
 				UUID.randomUUID().toString());
 		spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
 		KafkaSpout kafkaSpout = new KafkaSpout(spoutConfig);
