@@ -4,10 +4,6 @@ import java.util.UUID;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
-import org.apache.storm.StormSubmitter;
-import org.apache.storm.generated.AlreadyAliveException;
-import org.apache.storm.generated.AuthorizationException;
-import org.apache.storm.generated.InvalidTopologyException;
 import org.apache.storm.kafka.BrokerHosts;
 import org.apache.storm.kafka.KafkaSpout;
 import org.apache.storm.kafka.SpoutConfig;
@@ -22,12 +18,17 @@ import cl.citiaps.dashboard.bolt.EnviaMision;
 import cl.citiaps.dashboard.bolt.MisionesPorPersona;
 import cl.citiaps.dashboard.bolt.MisionesTotales;
 import cl.citiaps.dashboard.bolt.ParseLog;
+import cl.citiaps.dashboard.utils.Configuration;
 
 public class Topology {
 	public static void main(String[] args) {
+		Configuration configuration = new Configuration("config/config.properties");
+		configuration.Setup();
+
 		String topicName = args[1];
-		BrokerHosts hosts = new ZkHosts("158.170.140.118:2181");
-		SpoutConfig spoutConfig = new SpoutConfig(hosts, topicName, "/" + topicName, UUID.randomUUID().toString());
+		BrokerHosts hosts = new ZkHosts(configuration.zk.host + ":" + configuration.zk.port);
+		SpoutConfig spoutConfig = new SpoutConfig(hosts, configuration.kafka.topic, "/" + topicName,
+				UUID.randomUUID().toString());
 		spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
 		KafkaSpout kafkaSpout = new KafkaSpout(spoutConfig);
 
@@ -38,28 +39,40 @@ public class Topology {
 
 		TopologyBuilder builder = new TopologyBuilder();
 
+		/**
+		 * Consumidor de Kafka
+		 */
 		builder.setSpout("LogsSpout", kafkaSpout, 1);
 
+		/**
+		 * Parseo de los datos que se obtienen de Kafka en la clase Log
+		 */
 		builder.setBolt("ParseLog", new ParseLog(), 1).shuffleGrouping("LogsSpout");
 
-		builder.setBolt("MisionesTotales", new MisionesTotales(5, 5), 1).shuffleGrouping("ParseLog");
-		// builder.setBolt("EnviaMision", new EnviaMision(),
-		// 1).shuffleGrouping("ParseLog");
+		/**
+		 * Envío de los mensajes
+		 */
 		builder.setBolt("EnviaMensaje", new EnviaMensaje(), 1).shuffleGrouping("ParseLog");
+
+		/**
+		 * Obtención de las estadísticas respecto a la creación y cantidad de
+		 * misiones que se encuentren realizadas en el sistema
+		 */
+		builder.setBolt("EnviaMision", new EnviaMision(), 1).shuffleGrouping("ParseLog");
+		builder.setBolt("MisionesTotales", new MisionesTotales(5, 5), 1).shuffleGrouping("ParseLog");
 		builder.setBolt("MisionesPorPersona", new MisionesPorPersona(5, 5), 1).shuffleGrouping("ParseLog");
 
-		builder.setBolt("ElasticSearch", new ElasticSearch("158.170.35.88", 9300, "cluster", "telegram", args[2]))
-				.shuffleGrouping("EnviaMensaje").shuffleGrouping("MisionesPorPersona")
+		/**
+		 * Envío de las estadísticas obtenidas anteriormente
+		 */
+		builder.setBolt("ElasticSearch",
+				new ElasticSearch(configuration.elasticSearch.host, configuration.elasticSearch.port,
+						configuration.elasticSearch.clusterName, configuration.elasticSearch.index,
+						configuration.elasticSearch.type))
+				.shuffleGrouping("EnviaMensaje").shuffleGrouping("EnviaMision").shuffleGrouping("MisionesPorPersona")
 				.shuffleGrouping("MisionesTotales");
 
 		LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology(args[0], config, builder.createTopology());
-		/*
-		 * try { StormSubmitter.submitTopology(args[0], config,
-		 * builder.createTopology());
-		 * 
-		 * } catch (AlreadyAliveException | InvalidTopologyException |
-		 * AuthorizationException e) { e.printStackTrace(); }
-		 */
 	}
 }

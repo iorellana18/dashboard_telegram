@@ -17,13 +17,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.eda.Mision;
+import cl.citiaps.dashboard.eda.User;
 
 /*****
  * Bolt que obtiene cantidad de misiones de cada encargado por ventana de tiempo
+ * 
+ ******/
 
-******/
-
-public class MisionesPorPersona implements IRichBolt{
+public class MisionesPorPersona implements IRichBolt {
 
 	private static final long serialVersionUID = 7784329420249780555L;
 
@@ -37,13 +38,12 @@ public class MisionesPorPersona implements IRichBolt{
 	private long emitTimeframe;
 
 	private Map<String, Long> countMisiones;
-	private Map<String, Mision> classMisiones;
 
 	public MisionesPorPersona(long timeDelay, long emitTimeframe) {
 		this.timeDelay = timeDelay;
 		this.emitTimeframe = emitTimeframe;
 	}
-	
+
 	@Override
 	public void cleanup() {
 		logger.info("Close " + this.getClass().getSimpleName());
@@ -55,16 +55,18 @@ public class MisionesPorPersona implements IRichBolt{
 	@Override
 	public void execute(Tuple tuple) {
 		Log log = (Log) tuple.getValueByField("log");
-		if(log.getText().equals("/sys_enviar_mision")){
-			if(this.countMisiones.containsKey(log.getEncargado())){
+		if (log.getText().equals("/sys_enviar_mision")) {
+			if (this.countMisiones.containsKey(log.getEncargado())) {
 				this.countMisiones.put(log.getEncargado(), (this.countMisiones.get(log.getEncargado()) + 1));
-			}else{
+			} else {
 				this.countMisiones.put(log.getEncargado(), Long.valueOf(1));
-				Mision mision = log.getMision();
-				this.classMisiones.put(log.getEncargado(),mision);
 			}
-		}else if(log.getText().equals("/sys_terminar_mision")){
-			this.countMisiones.put(log.getEncargado(), Long.valueOf(-1));
+		} else if (log.getText().equals("/sys_terminar_mision")) {
+			if (this.countMisiones.containsKey(log.getEncargado())) {
+				this.countMisiones.put(log.getEncargado(), (this.countMisiones.get(log.getEncargado()) - 1));
+			} else {
+				this.countMisiones.put(log.getEncargado(), Long.valueOf(-1));
+			}
 		}
 	}
 
@@ -74,19 +76,17 @@ public class MisionesPorPersona implements IRichBolt{
 		this.outputCollector = outputCollector;
 
 		this.countMisiones = Collections.synchronizedMap(new HashMap<String, Long>());
-		this.classMisiones = new HashMap<String, Mision>();
-		
+
 		this.emitTask = new Timer();
-		this.emitTask.scheduleAtFixedRate(
-				new EmitTask(this.countMisiones, this.classMisiones, this.outputCollector), timeDelay * 1000,
+		this.emitTask.scheduleAtFixedRate(new EmitTask(this.countMisiones, this.outputCollector), timeDelay * 1000,
 				emitTimeframe * 1000);
-		
+
 	}
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		outputFieldsDeclarer.declare(new Fields("mision"));
-		
+		outputFieldsDeclarer.declare(new Fields("usuario"));
+
 	}
 
 	@Override
@@ -94,16 +94,12 @@ public class MisionesPorPersona implements IRichBolt{
 		return mapConf;
 	}
 
-	
 	private class EmitTask extends TimerTask {
 		private final Map<String, Long> countMisiones;
-		private final Map<String, Mision> classMisiones;
 		private final OutputCollector outputCollector;
 
-		public EmitTask(Map<String, Long> countMisiones, Map<String, Mision> classMisiones,
-				OutputCollector outputCollector) {
+		public EmitTask(Map<String, Long> countMisiones, OutputCollector outputCollector) {
 			this.countMisiones = countMisiones;
-			this.classMisiones = classMisiones;
 			this.outputCollector = outputCollector;
 		}
 
@@ -114,21 +110,16 @@ public class MisionesPorPersona implements IRichBolt{
 		@Override
 		public void run() {
 
-			Map<String, Long> snapshotCountVoluntarios;
+			Map<String, Long> snapshotCountMisiones;
 			synchronized (this.countMisiones) {
-				snapshotCountVoluntarios = new HashMap<String, Long>(this.countMisiones);
-		
+				snapshotCountMisiones = new HashMap<String, Long>(this.countMisiones);
 				this.countMisiones.clear();
 			}
 
-			if(!classMisiones.isEmpty()){
-				for (Mision mision : classMisiones.values()) {
-					logger.info("{}", mision);
-					mision.setCount(snapshotCountVoluntarios.get(mision.getMision()));
-					this.outputCollector.emit(new Values(mision));
-				}
+			for (String username : snapshotCountMisiones.keySet()) {
+				User user = new User(username, snapshotCountMisiones.get(username));
+				this.outputCollector.emit(new Values(user));
 			}
 		}
-
 	}
 }

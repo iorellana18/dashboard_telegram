@@ -34,8 +34,8 @@ public class Log {
 		setMissionId(parser[7]);
 		setMission(parser[8]);
 		setEncargado(parser[9]);
-		//setLatitud(Long.valueOf(parser[11]));
-		//setLongitud(Long.valueOf(parser[12]));
+		// setLatitud(Long.valueOf(parser[11]));
+		// setLongitud(Long.valueOf(parser[12]));
 	}
 
 	public Message getMessage() {
@@ -154,6 +154,5 @@ public class Log {
 	public void setLongitud(long longitud) {
 		this.longitud = longitud;
 	}
-
 
 }

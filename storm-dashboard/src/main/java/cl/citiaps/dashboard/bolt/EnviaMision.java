@@ -35,7 +35,7 @@ public class EnviaMision implements IRichBolt {
 		if (log.getText().equals("/sys_enviar_mision")) {
 			Mision mision = log.getMision();
 			logger.info(mision.toString());
-			// this.outputCollector.emit(mision.factoryCount());
+			this.outputCollector.emit(mision.factoryCount());
 		}
 
 	}
@@ -48,7 +48,7 @@ public class EnviaMision implements IRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		// outputFieldsDeclarer.declare(new Fields("mision"));
+		outputFieldsDeclarer.declare(new Fields("mision"));
 
 	}
 

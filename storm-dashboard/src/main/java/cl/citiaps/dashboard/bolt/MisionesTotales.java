@@ -20,12 +20,10 @@ import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
 /*****
- * Bolt que muestra datos cuantitativos del estado las misiones
- * Datos que envía:
- * * Cantidad de misiones creadas
- * * Cantidad de misiones iniciadas
- * * Cantidad de misiones finalizadas
-******/
+ * Bolt que muestra datos cuantitativos del estado las misiones Datos que envía:
+ * * Cantidad de misiones creadas * Cantidad de misiones iniciadas * Cantidad de
+ * misiones finalizadas
+ ******/
 
 public class MisionesTotales implements IRichBolt {
 
@@ -40,7 +38,7 @@ public class MisionesTotales implements IRichBolt {
 
 	private AtomicLong misionesCreadas;
 	private AtomicLong misionesFinalizadas;
-	
+
 	private Long timeStampCurrent;
 
 	public MisionesTotales(long timeDelay, long emitTimeframe) {
@@ -96,15 +94,15 @@ public class MisionesTotales implements IRichBolt {
 
 		private long previousCreadas;
 		private long previousFinalizadas;
-		private long CreadasRate;
-		private long FinalizadasRate;
+		private long creadasRate;
+		private long finalizadasRate;
 
 		public EmitTask(OutputCollector outputCollector) {
 			this.outputCollector = outputCollector;
 			this.previousCreadas = 0;
 			this.previousFinalizadas = 0;
-			this.CreadasRate = 0;
-			this.FinalizadasRate = 0;
+			this.creadasRate = 0;
+			this.finalizadasRate = 0;
 		}
 
 		/**
@@ -113,23 +111,25 @@ public class MisionesTotales implements IRichBolt {
 		 */
 		@Override
 		public void run() {
-			long CreadasSnapshot = misionesCreadas.get();
-			long FinalizadasSnapshot = misionesFinalizadas.get();
+			long creadasSnapshot = misionesCreadas.get();
+			long finalizadasSnapshot = misionesFinalizadas.get();
 
-			this.CreadasRate = CreadasSnapshot - this.previousCreadas;
-			this.FinalizadasRate = FinalizadasSnapshot - this.previousFinalizadas;
+			this.creadasRate = creadasSnapshot - this.previousCreadas;
+			this.finalizadasRate = finalizadasSnapshot - this.previousFinalizadas;
 
-			this.previousCreadas = CreadasSnapshot;
-			this.previousFinalizadas = FinalizadasSnapshot;
+			this.previousCreadas = creadasSnapshot;
+			this.previousFinalizadas = finalizadasSnapshot;
 
-			System.out.println("Misiones creadas: " + this.CreadasRate);
-			System.out.println("Misiones finalizadas: " + this.FinalizadasRate);
-			
-			Count creadas = new Count("misionesCreadasRate",ParseDate.parse(timeStampCurrent), this.CreadasRate); 
-			Count finalizadas = new Count("misionesFinalizadasCount",ParseDate.parse(timeStampCurrent), this.FinalizadasRate);
+			logger.info("Misiones creadas: {}", this.creadasRate);
+			logger.info("Misiones finalizadas: {}", this.finalizadasRate);
+
+			Count creadas = new Count("misionesCreadasRate", ParseDate.parse(timeStampCurrent), this.creadasRate);
+			Count finalizadas = new Count("misionesFinalizadasRate", ParseDate.parse(timeStampCurrent),
+					this.finalizadasRate);
+
 			this.outputCollector.emit(creadas.factoryCount());
 			this.outputCollector.emit(finalizadas.factoryCount());
-			 
+
 		}
 
 	}

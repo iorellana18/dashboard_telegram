@@ -24,6 +24,7 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.eda.Message;
 import cl.citiaps.dashboard.eda.Mision;
+import cl.citiaps.dashboard.eda.User;
 
 public class ElasticSearch implements IRichBolt {
 
@@ -71,35 +72,42 @@ public class ElasticSearch implements IRichBolt {
 			});
 
 			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
-
+			logger.debug("{}", response);
 		} else if (tuple.contains("count")) {
 			Count count = (Count) tuple.getValueByField("count");
 
 			Map<String, Object> map = oMapper.convertValue(count, new TypeReference<Map<String, Object>>() {
 			});
-			logger.info("{}", map);
+			logger.debug("{}", map);
 
 			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
-			// logger.info("{}", response);
+			logger.debug("{}", response);
 		} else if (tuple.contains("mision")) {
 			Mision mision = (Mision) tuple.getValueByField("mision");
 
 			Map<String, Object> map = oMapper.convertValue(mision, new TypeReference<Map<String, Object>>() {
 			});
-			logger.info("{}", map);
+			logger.debug("{}", map);
 
 			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
-			// UpdateResponse response = transportClient.prepareUpdate("onemi",
-			// "mision").setDoc(map).get();
-			// logger.info("{}", response);
-		}else if (tuple.contains("message")){
-			Message message = (Message)tuple.getValueByField("message");
+			logger.debug("{}", response);
+		} else if (tuple.contains("message")) {
+			Message message = (Message) tuple.getValueByField("message");
 			Map<String, Object> map = oMapper.convertValue(message, new TypeReference<Map<String, Object>>() {
 			});
-			logger.info("{}", map);
+			logger.debug("{}", map);
 
 			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
-			logger.info("{}", response);
+			logger.debug("{}", response);
+		} else if (tuple.contains("usuario")) {
+			User user = (User) tuple.getValueByField("usuario");
+
+			Map<String, Object> map = oMapper.convertValue(user, new TypeReference<Map<String, Object>>() {
+			});
+			logger.debug("{}", map);
+
+			IndexResponse response = transportClient.prepareIndex(index, type).setSource(map).get();
+			logger.debug("{}", response);
 		}
 	}
 

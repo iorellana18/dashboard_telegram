@@ -1,48 +1,28 @@
 package cl.citiaps.dashboard.eda;
 
 public class User {
-	private String id;
-	private String firstName;
-	private String lastName;
-	private String userName;
-	
-	public User(){
-		setId("");
-		setFirstName("");
-		setLastName("");
-		setUserName("");
+	private String username;
+	private Long misiones;
+
+	public User(String username, Long misiones) {
+		this.setUsername(username);
+		this.setMisiones(misiones);
 	}
-	
-	public User(String id, String firstName, String lastName, String userName){
-		setId(id);
-		setFirstName(firstName);
-		setLastName(lastName);
-		setUserName(userName);
+
+	public String getUsername() {
+		return username;
 	}
-	
-	public String getId() {
-		return id;
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
-	public void setId(String id) {
-		this.id = id;
+
+	public Long getMisiones() {
+		return misiones;
 	}
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+
+	public void setMisiones(Long misiones) {
+		this.misiones = misiones;
 	}
 
 }
