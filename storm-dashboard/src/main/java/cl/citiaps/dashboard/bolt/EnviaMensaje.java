@@ -83,11 +83,13 @@ public class EnviaMensaje implements IRichBolt {
 
 	public Boolean comprueba(String texto) {
 		if (texto.equals("/sys_enviar_mision") || texto.equals("/enviar_mision") || texto.equals("/sys_terminar_mision")
-				|| texto.equals("/terminar_tarea") || texto.equals("/ayuda@RimayBot")
-				|| texto.equals("/listar_tareas@RimayBot") || texto.equals("/crear_tarea@RimayBot")
-				|| texto.equals("/terminar_tarea@RimayBot") || texto.equals("/cancelar@RimayBot")
-				|| texto.equals("/admin_user@RimayBot") || texto.equals("/listar_usuarios@RimayBot") 
-				|| texto.equals("/listar_tareas") || texto.equals("/crear_tarea")) {
+				|| texto.equals("/terminar_tarea") || texto.equals("/terminar_tarea@RimayBot")
+				|| texto.equals("/listar_tareas@RimayBot") || texto.equals("/listar_tareas")
+				|| texto.equals("/ayuda@RimayBot") || texto.equals("/ayuda")
+				|| texto.equals("/admin_user@RimayBot") || texto.equals("/admin_user") 
+				|| texto.equals("/crear_tarea@RimayBot") || texto.equals("/crear_tarea")
+				|| texto.equals("/listar_usuarios") || texto.equals("/listar_usuarios@RimayBot")
+				|| texto.equals("/cancelar@RimayBot") || texto.equals("/cancelar")  ) {
 			return false;
 		}
 		return true;

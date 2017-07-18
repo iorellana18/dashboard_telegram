@@ -52,7 +52,11 @@ public class Log {
 		dateFormat.setTimeZone(timeZone);
 		mision.setDate(dateFormat.format(timeStamp));
 		mision.setEncargado(encargado);
-		mision.setLocation(latitud + "," + longitud);
+		if(latitud==0 || longitud==0){
+			mision.setLocation(null);
+		}else{
+			mision.setLocation(latitud + "," + longitud);
+		}
 		return mision;
 	}
 
