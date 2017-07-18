@@ -35,7 +35,7 @@ public class Log {
 		setMission(parser[8]);
 		setEncargado(parser[9]);
 		setLatitud(Long.valueOf(parser[11]));
-		setLongitud(Long.valueOf(parser[12]));
+		setLongitud(Long.valueOf(parser[12].replace("\"","")));
 	}
 
 	public Message getMessage() {
