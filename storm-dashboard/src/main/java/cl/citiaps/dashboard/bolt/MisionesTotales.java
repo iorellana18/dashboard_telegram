@@ -19,7 +19,6 @@ import cl.citiaps.dashboard.eda.Count;
 import cl.citiaps.dashboard.eda.Log;
 import cl.citiaps.dashboard.utils.ParseDate;
 
-
 /*****
  * Bolt que muestra datos cuantitativos del estado las misiones
  * Datos que envía:
@@ -41,6 +40,8 @@ public class MisionesTotales implements IRichBolt {
 
 	private AtomicLong misionesCreadas;
 	private AtomicLong misionesFinalizadas;
+	
+	private Long timeStampCurrent;
 
 	public MisionesTotales(long timeDelay, long emitTimeframe) {
 		this.timeDelay = timeDelay;
@@ -59,8 +60,10 @@ public class MisionesTotales implements IRichBolt {
 		Log log = (Log) tuple.getValueByField("log");
 		if (log.getText().equals("/sys_enviar_mision")) {
 			this.misionesCreadas.getAndIncrement();
+			timeStampCurrent = log.getTimeStamp();
 		} else if (log.getText().equals("/sys_terminar_mision")) {
 			this.misionesFinalizadas.getAndIncrement();
+			timeStampCurrent = log.getTimeStamp();
 		}
 	}
 
@@ -72,6 +75,7 @@ public class MisionesTotales implements IRichBolt {
 
 		this.misionesCreadas = new AtomicLong(0);
 		this.misionesFinalizadas = new AtomicLong(0);
+		this.timeStampCurrent = new Date().getTime();
 
 		this.emitTask = new Timer();
 		this.emitTask.scheduleAtFixedRate(new EmitTask(this.outputCollector), timeDelay * 1000, emitTimeframe * 1000);
@@ -79,7 +83,7 @@ public class MisionesTotales implements IRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		//outputFieldsDeclarer.declare(new Fields("log"));
+		outputFieldsDeclarer.declare(new Fields("count"));
 	}
 
 	@Override
@@ -120,17 +124,12 @@ public class MisionesTotales implements IRichBolt {
 
 			System.out.println("Misiones creadas: " + this.CreadasRate);
 			System.out.println("Misiones finalizadas: " + this.FinalizadasRate);
-			/*
-			 * Count creadas = new Count("misionesCreadasRate",
-			 * ParseDate.parse(timestampCurrent), this.CreadasRate); Count
-			 * iniciadas = new Count("misionesIniciadasRate",
-			 * ParseDate.parse(timestampCurrent), this.IniciadasRate); Count
-			 * finalizadas = new Count("misionesFinalizadasCount",
-			 * ParseDate.parse(timestampCurrent), this.FinalizadasRate);
-			 * this.outputCollector.emit(creadas.factoryCount());
-			 * this.outputCollector.emit(iniciadas.factoryCount());
-			 * this.outputCollector.emit(finalizadas.factoryCount());
-			 */
+			
+			Count creadas = new Count("misionesCreadasRate",ParseDate.parse(timeStampCurrent), this.CreadasRate); 
+			Count finalizadas = new Count("misionesFinalizadasCount",ParseDate.parse(timeStampCurrent), this.FinalizadasRate);
+			this.outputCollector.emit(creadas.factoryCount());
+			this.outputCollector.emit(finalizadas.factoryCount());
+			 
 		}
 
 	}

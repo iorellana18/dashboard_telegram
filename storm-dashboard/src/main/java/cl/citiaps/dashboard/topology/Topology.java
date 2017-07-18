@@ -4,6 +4,10 @@ import java.util.UUID;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
+import org.apache.storm.StormSubmitter;
+import org.apache.storm.generated.AlreadyAliveException;
+import org.apache.storm.generated.AuthorizationException;
+import org.apache.storm.generated.InvalidTopologyException;
 import org.apache.storm.kafka.BrokerHosts;
 import org.apache.storm.kafka.KafkaSpout;
 import org.apache.storm.kafka.SpoutConfig;
@@ -39,17 +43,23 @@ public class Topology {
 		builder.setBolt("ParseLog", new ParseLog(), 1).shuffleGrouping("LogsSpout");
 
 		builder.setBolt("MisionesTotales", new MisionesTotales(5, 5), 1).shuffleGrouping("ParseLog");
-		builder.setBolt("EnviaMision", new EnviaMision(), 1).shuffleGrouping("ParseLog");
+		// builder.setBolt("EnviaMision", new EnviaMision(),
+		// 1).shuffleGrouping("ParseLog");
 		builder.setBolt("EnviaMensaje", new EnviaMensaje(), 1).shuffleGrouping("ParseLog");
-		builder.setBolt("MisionesPorPersona",new MisionesPorPersona(5,5),1).shuffleGrouping("ParseLog");
+		builder.setBolt("MisionesPorPersona", new MisionesPorPersona(5, 5), 1).shuffleGrouping("ParseLog");
 
-		 builder.setBolt("ElasticSearch", new ElasticSearch("158.170.35.88",
-		 9300, "cluster", "telegram", args[2]))
-		 .shuffleGrouping("EnviaMensaje")
-		 .shuffleGrouping("MisionesPorPersona");
-
+		builder.setBolt("ElasticSearch", new ElasticSearch("158.170.35.88", 9300, "cluster", "telegram", args[2]))
+				.shuffleGrouping("EnviaMensaje").shuffleGrouping("MisionesPorPersona")
+				.shuffleGrouping("MisionesTotales");
 
 		LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology(args[0], config, builder.createTopology());
+		/*
+		 * try { StormSubmitter.submitTopology(args[0], config,
+		 * builder.createTopology());
+		 * 
+		 * } catch (AlreadyAliveException | InvalidTopologyException |
+		 * AuthorizationException e) { e.printStackTrace(); }
+		 */
 	}
 }
