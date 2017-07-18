@@ -19,8 +19,8 @@ public class Log {
 	private String missionId;
 	private String mission;
 	private String encargado;
-	private long latitud;
-	private long longitud;
+	private float latitud;
+	private float longitud;
 
 	public Log(String text) {
 		String[] parser = text.split("\\s*\",\"\\s*");
@@ -34,8 +34,8 @@ public class Log {
 		setMissionId(parser[7]);
 		setMission(parser[8]);
 		setEncargado(parser[9]);
-		setLatitud(Long.valueOf(parser[11]));
-		setLongitud(Long.valueOf(parser[12].replace("\"","")));
+		setLatitud(Float.valueOf(parser[11]));
+		setLongitud(Float.valueOf(parser[12].replace("\"","")));
 	}
 
 	public Message getMessage() {
@@ -140,19 +140,19 @@ public class Log {
 		this.mission = mission;
 	}
 
-	public long getLatitud() {
+	public float getLatitud() {
 		return latitud;
 	}
 
-	public void setLatitud(long latitud) {
+	public void setLatitud(float latitud) {
 		this.latitud = latitud;
 	}
 
-	public long getLongitud() {
+	public float getLongitud() {
 		return longitud;
 	}
 
-	public void setLongitud(long longitud) {
+	public void setLongitud(float longitud) {
 		this.longitud = longitud;
 	}
 
